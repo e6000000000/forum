@@ -9,6 +9,9 @@ class Section(models.Model):
     raiting = models.IntegerField()
     creation_datetime = models.DateTimeField(auto_now_add=True)
 
+    def __repr__(self):
+        return self.title
+
 class Thread(models.Model):
     title = models.CharField(max_length=100, unique=True)
     author = models.ForeignKey(User, on_delete=models.SET_DEFAULT, default=AnonymousUser)
@@ -18,6 +21,9 @@ class Thread(models.Model):
 
     section = models.ForeignKey(Section, on_delete=models.CASCADE, related_name='threads', related_query_name="thread")
 
+    def __repr__(self):
+        return self.title
+
 class Post(models.Model):
     text = models.TextField(max_length=2000)
     author = models.ForeignKey(User, on_delete=models.SET_DEFAULT, default=AnonymousUser)
@@ -25,8 +31,13 @@ class Post(models.Model):
 
     reply_to = models.ForeignKey(
         'Post',
-        on_delete=models.SET_DEFAULT,
+        on_delete=models.SET_NULL,
         related_name='replys',
-        related_query_name="reply"
+        related_query_name="reply",
+        null=True,
+        blank=True
     )
     thread = models.ForeignKey(Thread, on_delete=models.CASCADE, related_name='posts', related_query_name='post')
+
+    def __repr__(self):
+        return self.text

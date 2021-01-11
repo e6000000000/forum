@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}{{ thread.title }}{% endblock %}
+{% block content %}
+    <a href="{% url 'section_details' thread.section.pk %}" class="link">back to {{ thread.section.title }}</a>
+    <br>
+    <h1>{{ thread.title }}</h1>
+    <p>closed: {{ thread.is_closed }}</p>
+    <br>
+    <p>author: {{ thread.author }}</p>
+    <p>created: {{ thread.creation_datetime }}</p>
+    <br>
+    {% for post in thread.posts.all %}
+        {% if post.reply_to %}
+            <p>reply to: {{ post.reply_to.author }}</p>
+        {% endif %}
+        <p>{{ post.text }}</p>
+        <p>author: {{ post.author }}</p>
+        <p>created: {{ post.creation_datetime }}</p>
+        <br>
+    {% endfor %}
+{% endblock %}

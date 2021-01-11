@@ -1,0 +1,47 @@
+* {
+    padding: 0;
+    margin: 0;
+    color: ivory;
+    background-color: transparent;
+    font-family: monospace;
+}
+
+body {
+    background-color: #101010;
+}
+
+header {
+    background-color: #000;
+    width: 100%;
+    height: 40pt;
+    left: 0;
+    top: 0;
+}
+
+.header_links {
+    height: inherit;
+    display: table-cell;
+    vertical-align: middle;
+    padding-left: 6pt;
+}
+
+.link {
+    text-decoration: none;
+}
+
+.header_link {
+    padding: 1pt 1pt;
+    font-size: 22pt;
+}
+
+.link:hover {
+    text-decoration: underline;
+}
+
+footer {
+    background-color: #303030;
+    width: 100%;
+    height: 40pt;
+    left: 0;
+    bottom: 0;
+}

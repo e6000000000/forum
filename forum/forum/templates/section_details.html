@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block title %}{{ section.title }}{% endblock %}
+{% block content %}
+    <h1>{{ section.title }}</h1>
+    <p>{{ section.description }}</p>
+    <br>
+    <p>author: {{ section.author }}</p>
+    <p>created: {{ section.creation_datetime }}</p>
+    <br>
+    {% for thread in section.threads.all %}
+        <a href="{% url 'thread_details' thread.pk %}" class="link">{{ thread.title }}</a>
+    {% endfor %}
+{% endblock %}

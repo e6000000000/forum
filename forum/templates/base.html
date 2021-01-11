@@ -1,0 +1,26 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'base.css' %}">
+    <title>{% block title %}Forum{% endblock %}</title>
+</head>
+<body>
+    <header>
+        <div class="header_links">
+            <a class="link header_link" href="{% url 'index' %}">General</a>
+            <a class="link header_link" href="#">two</a>
+            <a class="link header_link" href="#">three</a>
+        </div>
+    </header>
+    {% block content %}
+    {% endblock %}
+
+    <footer>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ultricies condimentum sagittis. Praesent cursus tincidunt faucibus. Sed eleifend enim ut tortor fringilla, vel posuere nibh rhoncus. Vestibulum dictum tempor interdum. Aliquam accumsan nunc eros, viverra consequat libero ultrices quis. Suspendisse auctor egestas augue vel sagittis. Nulla ac pellentesque odio. Nulla nec turpis a lacus lobortis varius. Nullam vestibulum porttitor accumsan. Praesent vehicula mollis neque, eget viverra odio eleifend nec. Nam malesuada accumsan leo, in dignissim nulla commodo et.</p>
+    </footer>
+</body>
+</html>

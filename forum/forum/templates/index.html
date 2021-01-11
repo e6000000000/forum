@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}Forum{% endblock %}
+{% block content %}
+    <h1>Forum sections</h1>
+    <a href="{% url 'section_create' %}">new</a>
+    <br>
+    {% for section in sections %}
+        <a href="{% url 'section_details' section.pk %}" class="link">{{ section.title }}</a>
+        <p>{{ section.description }}</p>
+        <br>
+    {% endfor %}
+{% endblock %}

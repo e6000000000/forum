@@ -3,11 +3,14 @@
 {% block content %}
     <h1>{{ section.title }}</h1>
     <p>{{ section.description }}</p>
-    <br>
     <p>author: {{ section.author }}</p>
     <p>created: {{ section.creation_datetime }}</p>
     <br>
+    <a href="{% url 'thread_create' section.pk %}" class="link">new</a>
+    <br>
+    <br>
     {% for thread in section.threads.all %}
-        <a href="{% url 'thread_details' thread.pk %}" class="link">{{ thread.title }}</a>
+        <a href="{% url 'thread_details' section.pk thread.pk %}" class="link">{{ thread.title }}</a>
+        <br>
     {% endfor %}
 {% endblock %}

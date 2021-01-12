@@ -1,10 +1,14 @@
 {% extends 'base.html' %}
-{% block title %}Create section{% endblock %}
+{% block title %}Create thread{% endblock %}
 {% block content %}
-    <h1>Create section</h1>
+    <h1>Create thread</h1>
     <br>
     <form method="post">{% csrf_token %}
         {{ form.as_p }}
+        
+        {% for formset in inlines %}
+            {{ formset }}
+        {% endfor %}
         <input type="submit" value="Create">
     </form>
 {% endblock %}

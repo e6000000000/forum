@@ -34,6 +34,9 @@ INSTALLED_APPS = [
     #my apps
     'forum',
 
+    #additional django apps
+    'extra_views',
+
     #django apps
     'django.contrib.admin',
     'django.contrib.auth',

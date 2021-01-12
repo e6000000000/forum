@@ -5,7 +5,6 @@
     <br>
     <h1>{{ thread.title }}</h1>
     <p>closed: {{ thread.is_closed }}</p>
-    <br>
     <p>author: {{ thread.author }}</p>
     <p>created: {{ thread.creation_datetime }}</p>
     <br>
@@ -16,6 +15,8 @@
         <p>{{ post.text }}</p>
         <p>author: {{ post.author }}</p>
         <p>created: {{ post.creation_datetime }}</p>
+        <a href="{% url 'postreply_create' thread.section.pk thread.pk post.pk %}" class="link">reply</a>
+        <br>
         <br>
     {% endfor %}
 {% endblock %}

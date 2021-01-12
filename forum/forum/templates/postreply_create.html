@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}Replay{% endblock %}
+{% block content %}
+    <h1>Post</h1>
+    <br>
+    {% if post.reply_to %}
+        <p>reply to: {{ post.reply_to.author }}</p>
+    {% endif %}
+    <p>{{ post.text }}</p>
+    <p>author: {{ post.author }}</p>
+    <p>created: {{ post.creation_datetime }}</p>
+    <br>
+    <h1>Replay</h1>
+    <br>
+    <form method="post">{% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Replay">
+    </form>
+{% endblock %}

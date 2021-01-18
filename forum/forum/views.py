@@ -10,21 +10,33 @@ from . import models
 
 
 class SectionListView(ListView):
+    """
+    Display a list of :model:`forum.Section`.
+    """
     model = models.Section
     context_object_name = 'sections'
     template_name = 'index.html'
 
 class SectionDetailView(DetailView):
+    """
+    Display a :model:`forum.Section`.
+    """
     model = models.Section
     context_object_name = 'section'
     template_name = 'section_details.html'
 
 class ThreadDetailView(DetailView):
+    """
+    Display a :model:`forum.Thread`.
+    """
     model = models.Thread
     context_object_name = 'thread'
     template_name = 'thread_details.html'
 
 class SectionCreateView(CreateView):
+    """
+    Display a creation form of :model:`forum.Section`
+    """
     model = models.Section
     template_name = 'section_create.html'
     fields = ['title', 'description']
@@ -37,9 +49,13 @@ class SectionCreateView(CreateView):
 
     def form_valid(self, form):
         form.instance.author = self.request.user
+        
         return super().form_valid(form)
 
 class PostInline(InlineFormSet):
+    """
+    InlineFormSet of :model:`forum.Post`
+    """
     model = models.Post
     fields = ['text']
 
@@ -50,13 +66,17 @@ class PostInline(InlineFormSet):
     }
 
 class ThreadCreateView(CreateWithInlinesView):
+    """
+    Display a creation form of :model:`forum.Thread` and 
+    first :model:`forum.Post` to this Thread
+    """
     model = models.Thread
     inlines = [PostInline]
 
     template_name = 'thread_create.html'
     fields = ['title']
 
-    def get_success_url(self, **kwargs):         
+    def get_success_url(self, **kwargs):
         if  kwargs != None:
             return reverse_lazy('thread_details', kwargs = {
                 'section_pk': self.object.section.pk,
@@ -65,18 +85,24 @@ class ThreadCreateView(CreateWithInlinesView):
 
     def forms_valid(self, form, inlines):
         section_pk = self.kwargs['section_pk']
+
         form.instance.author = self.request.user
         try:
             form.instance.section = models.Section.objects.get(pk=section_pk)
         except ObjectDoesNotExist:
             return HttpResponseBadRequest(f'section with pk={section_pk} does not exist')
 
-        for forms in inlines:
-            for postform in forms:
-                postform.instance.author = self.request.user
+        for formtype in inlines:
+            for form in formtype:
+                form.instance.author = self.request.user
+
         return super().forms_valid(form, inlines)
 
 class PostReplyCreateView(CreateView):
+    """
+    Display a creation form of :model:`forum.Post` 
+    which is a reply to some :model:`forum.Post` in the same :model:`forum.Thread`
+    """
     model = models.Post
     template_name = 'postreply_create.html'
     fields = ['text']
@@ -85,7 +111,7 @@ class PostReplyCreateView(CreateView):
         post_pk = self.kwargs['post_pk']
         try:
             kwargs['post'] = models.Post.objects.get(pk=post_pk)
-        except ObjectDoesNotExist:
+        except models.Post.DoesNotExist:
             return HttpResponseBadRequest(f'post with pk={post_pk} does not exist')
 
         return super().get_context_data(**kwargs)
@@ -93,15 +119,16 @@ class PostReplyCreateView(CreateView):
     def form_valid(self, form):
         post_pk = self.kwargs['post_pk']
         thread_pk = self.kwargs['thread_pk']
+
         form.instance.author = self.request.user
         try:
             form.instance.reply_to = models.Post.objects.get(pk=post_pk)
-        except ObjectDoesNotExist:
-            return HttpResponseBadRequest(f'post with pk={post_pk} does not exist')
-        try:
             form.instance.thread = models.Thread.objects.get(pk=thread_pk)
-        except ObjectDoesNotExist:
+        except models.Post.DoesNotExist:
+            return HttpResponseBadRequest(f'post with pk={post_pk} does not exist')
+        except models.Thread.DoesNotExist:
             return HttpResponseBadRequest(f'thread with pk={thread_pk} does not exist')
+
         return super().form_valid(form)
 
     def get_success_url(self, **kwargs):         

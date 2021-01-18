@@ -3,6 +3,9 @@ from django.contrib.auth.models import User
 
 
 class Section(models.Model):
+    """Stores a section of forum,
+    related to :model:`auth.User`
+    """
     title = models.CharField(max_length=100, unique=True)
     description = models.TextField(max_length=500)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -15,6 +18,9 @@ class Section(models.Model):
         return self.title
 
 class Thread(models.Model):
+    """Stores a thread of section,
+    related to :model:`auth.User` and :model:`forum.Section`
+    """
     title = models.CharField(max_length=100, unique=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     raiting = models.IntegerField(default=0)
@@ -29,6 +35,9 @@ class Thread(models.Model):
         return self.title
 
 class Post(models.Model):
+    """Stores a forum thread,
+    related to :model:`auth.User` and :model:`forum.Section`
+    """
     text = models.TextField(max_length=2000)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     creation_datetime = models.DateTimeField(auto_now_add=True)

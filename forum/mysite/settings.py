@@ -32,6 +32,7 @@ ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     #my apps
+    'accounts',
     'forum',
 
     #additional django apps

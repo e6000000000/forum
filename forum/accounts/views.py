@@ -1,3 +1,11 @@
-from django.shortcuts import render
+from django.views.generic import UpdateView, DetailView
+from django.contrib.auth.models import User
 
-# Create your views here.
+
+class ProfileDetailView(DetailView):
+    """
+    Display a :model:`auth.User`.
+    """
+    model = User
+    context_object_name = 'account'
+    template_name = 'accounts/profile.html'

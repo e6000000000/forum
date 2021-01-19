@@ -12,8 +12,13 @@
     <header>
         <div class="header_links">
             <a class="link header_link" href="{% url 'index' %}">General</a>
-            <a class="link header_link" href="#">two</a>
-            <a class="link header_link" href="#">three</a>
+            {% if user.is_anonymous %}
+                <a class="link header_link" href="{% url 'django_registration_register' %}?next={{request.path}}">register</a>
+                <a class="link header_link" href="{% url 'login' %}?next={{request.path}}">login</a>
+            {% else %}
+                <a class="link header_link" href="{% url 'profile' user.pk %}">{{ user }}</a>
+                <a class="link header_link" href="{% url 'logout' %}?next={{request.path}}">logout</a>
+            {% endif %}
         </div>
     </header>
     {% block content %}

@@ -1,10 +1,7 @@
-from django.shortcuts import render, HttpResponse
 from django.http import HttpResponseBadRequest
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView
-from django.core.exceptions import ObjectDoesNotExist
 from extra_views import CreateWithInlinesView, InlineFormSet
-from django.forms.formsets import formset_factory
 
 from . import models
 
@@ -15,7 +12,7 @@ class SectionListView(ListView):
     """
     model = models.Section
     context_object_name = 'sections'
-    template_name = 'index.html'
+    template_name = 'forum/index.html'
 
 class SectionDetailView(DetailView):
     """
@@ -23,7 +20,7 @@ class SectionDetailView(DetailView):
     """
     model = models.Section
     context_object_name = 'section'
-    template_name = 'section_details.html'
+    template_name = 'forum/section_details.html'
 
 class ThreadDetailView(DetailView):
     """
@@ -31,14 +28,14 @@ class ThreadDetailView(DetailView):
     """
     model = models.Thread
     context_object_name = 'thread'
-    template_name = 'thread_details.html'
+    template_name = 'forum/thread_details.html'
 
 class SectionCreateView(CreateView):
     """
     Display a creation form of :model:`forum.Section`
     """
     model = models.Section
-    template_name = 'section_create.html'
+    template_name = 'forum/section_create.html'
     fields = ['title', 'description']
 
     def get_success_url(self, **kwargs):         
@@ -73,7 +70,7 @@ class ThreadCreateView(CreateWithInlinesView):
     model = models.Thread
     inlines = [PostInline]
 
-    template_name = 'thread_create.html'
+    template_name = 'forum/thread_create.html'
     fields = ['title']
 
     def get_success_url(self, **kwargs):
@@ -89,7 +86,7 @@ class ThreadCreateView(CreateWithInlinesView):
         form.instance.author = self.request.user
         try:
             form.instance.section = models.Section.objects.get(pk=section_pk)
-        except ObjectDoesNotExist:
+        except models.Section.DoesNotExist:
             return HttpResponseBadRequest(f'section with pk={section_pk} does not exist')
 
         for formtype in inlines:
@@ -104,7 +101,7 @@ class PostReplyCreateView(CreateView):
     which is a reply to some :model:`forum.Post` in the same :model:`forum.Thread`
     """
     model = models.Post
-    template_name = 'postreply_create.html'
+    template_name = 'forum/postreply_create.html'
     fields = ['text']
 
     def get_context_data(self, **kwargs):

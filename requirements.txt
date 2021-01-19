@@ -1,7 +1,9 @@
 asgiref==3.3.1
 astroid==2.4.2
+confusable-homoglyphs==3.2.0
 Django==3.1.5
 django-extra-views==0.13.0
+django-registration==3.1.1
 isort==5.7.0
 lazy-object-proxy==1.4.3
 mccabe==0.6.1

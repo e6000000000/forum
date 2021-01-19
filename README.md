@@ -16,10 +16,23 @@ psql -h localhost -p 5432 -U postgres
 CREATE DATABASE forum;
 ```
 
-and start django server
+install forum
 ```
 git clone https://github.com/e6000000000/forum.git
 cd forum
+```
+
+create file `forum/mysite/secret_settings.py` and configure it
+```python
+SECRET_KEY = 'your secret key'
+DATABASE_PASSWORD = 'your database password'
+EMAIL_HOST_USER = 'your@mail.com'
+EMAIL_HOST_PASSWORD = 'yourpassword'
+```
+
+
+build and start server
+```
 docker build -t forum .
 docker run --net=host forum
 ```

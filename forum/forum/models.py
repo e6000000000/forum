@@ -1,14 +1,13 @@
 from django.db import models
-from django.contrib.auth.models import User
 
 
 class Section(models.Model):
     """Stores a section of forum,
-    related to :model:`auth.User`
+    related to :model:`accounts.User`
     """
     title = models.CharField(max_length=100, unique=True)
     description = models.TextField(max_length=500)
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    author = models.ForeignKey('accounts.User', on_delete=models.CASCADE, null=True)
     raiting = models.IntegerField(default=0)
     creation_datetime = models.DateTimeField(auto_now_add=True)
 
@@ -19,10 +18,10 @@ class Section(models.Model):
 
 class Thread(models.Model):
     """Stores a thread of section,
-    related to :model:`auth.User` and :model:`forum.Section`
+    related to :model:`accounts.User` and :model:`forum.Section`
     """
     title = models.CharField(max_length=100, unique=True)
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    author = models.ForeignKey('accounts.User', on_delete=models.CASCADE, null=True)
     raiting = models.IntegerField(default=0)
     is_closed = models.BooleanField(default=False)
     creation_datetime = models.DateTimeField(auto_now_add=True)
@@ -36,10 +35,10 @@ class Thread(models.Model):
 
 class Post(models.Model):
     """Stores a forum thread,
-    related to :model:`auth.User` and :model:`forum.Section`
+    related to :model:`accounts.User` and :model:`forum.Section`
     """
     text = models.TextField(max_length=2000)
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    author = models.ForeignKey('accounts.User', on_delete=models.CASCADE, null=True)
     creation_datetime = models.DateTimeField(auto_now_add=True)
 
     reply_to = models.ForeignKey(

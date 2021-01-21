@@ -2,5 +2,10 @@
 {% block title %}{{ account }}{% endblock %}
 
 {% block content %}
+    {% if user == account %}
+        <a class="link" href="{% url 'profile_edit' %}">Edit</a>
+    {% endif %}
     <h1>{{ account }}</h1>
+    <img src="{{ account.avatar.url }}" width="200" height="200">
+    <p>Bio: {{ account.bio }}</p>
 {% endblock %}

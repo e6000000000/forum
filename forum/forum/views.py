@@ -1,4 +1,4 @@
-from django.http import HttpResponseBadRequest
+from django.http import HttpResponseBadRequest, HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView
 from extra_views import CreateWithInlinesView, InlineFormSet
@@ -45,6 +45,9 @@ class SectionCreateView(CreateView):
             })
 
     def form_valid(self, form):
+        if self.request.user.is_anonymous:
+            return HttpResponseRedirect(reverse_lazy('login'))
+
         form.instance.author = self.request.user
         
         return super().form_valid(form)
@@ -81,6 +84,9 @@ class ThreadCreateView(CreateWithInlinesView):
             })
 
     def forms_valid(self, form, inlines):
+        if self.request.user.is_anonymous:
+            return HttpResponseRedirect(reverse_lazy('login'))
+
         section_pk = self.kwargs['section_pk']
 
         form.instance.author = self.request.user
@@ -114,6 +120,9 @@ class PostReplyCreateView(CreateView):
         return super().get_context_data(**kwargs)
 
     def form_valid(self, form):
+        if self.request.user.is_anonymous:
+            return HttpResponseRedirect(reverse_lazy('login'))
+
         post_pk = self.kwargs['post_pk']
         thread_pk = self.kwargs['thread_pk']
 

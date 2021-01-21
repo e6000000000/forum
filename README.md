@@ -30,9 +30,11 @@ EMAIL_HOST_USER = 'your@mail.com'
 EMAIL_HOST_PASSWORD = 'yourpassword'
 ```
 
-
 build and start server
 ```
 docker build -t forum .
 docker run --net=host forum
 ```
+
+# Configuration
+To setup default user avatar you should add `default.png` file to your media dir (default is `forum/media/`)

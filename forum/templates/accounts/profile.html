@@ -1,11 +1,19 @@
 {% extends 'base.html' %}
-{% block title %}{{ account }}{% endblock %}
+{% block title %}{{ account.username }}{% endblock %}
 
 {% block content %}
-    {% if user == account %}
-        <a class="link" href="{% url 'profile_edit' %}">Edit</a>
-    {% endif %}
-    <h1>{{ account }}</h1>
-    <img src="{{ account.avatar.url }}" width="200" height="200">
-    <p>Bio: {{ account.bio }}</p>
+    <div class="item">
+        {% if user == account %}
+            <a class="link" href="{% url 'profile_edit' %}">Edit</a>
+        {% endif %}
+    </div>
+    <div class="item">
+        <img src="{{ account.avatar.url }}" width="200" height="200">
+        <div class="text">
+            <h1>{{ account.username }}</h1>
+            <p><span>First name:</span>{{ account.first_name }}</p>
+            <p><span>Last name:</span>{{ account.last_name }}</p>
+            <p><span>Bio:</span>{{ account.bio }}</p>
+        </div>
+    </div>
 {% endblock %}

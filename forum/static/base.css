@@ -1,7 +1,7 @@
 * {
     padding: 0;
     margin: 0;
-    color: ivory;
+    color: #FFFFF0;
     background-color: transparent;
     font-family: monospace;
 }
@@ -25,17 +25,17 @@ header {
     padding-left: 6pt;
 }
 
-.link {
+a {
     text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
 }
 
 .header_link {
     padding: 1pt 1pt;
     font-size: 22pt;
-}
-
-.link:hover {
-    text-decoration: underline;
 }
 
 footer {
@@ -45,3 +45,78 @@ footer {
     position: fixed;
     bottom: 0;
 }
+
+.border {
+    border: solid #000 1pt;
+}
+
+.item {
+    margin-bottom: 3pt;
+    margin-top: 3pt;
+    padding: 2pt;
+}
+
+.item .text {
+    display: inline-block;
+}
+
+.item .text>p {
+    margin-left: 4pt;
+    margin-right: 4pt;
+}
+
+.item .text>a {
+    margin-left: 4pt;
+    margin-right: 4pt;
+}
+
+.item>img {
+    display: inline-block;
+    vertical-align: top;
+}
+
+.list {
+    padding: 2pt;
+    margin-left: 4pt;
+    margin-right: 4pt;
+}
+
+span, ul li {
+    color: #AAA;
+    margin-left: 4pt;
+    margin-right: 4pt;
+}
+
+form {
+    display: block;
+    margin-left: 4pt;
+    margin-right: 4pt;
+    max-width: 300pt;
+    border: 1px solid #000;
+}
+
+form * {
+    display: block;
+    width: 100%;
+    outline: 0px solid transparent;
+    box-shadow: none;
+}
+
+form input[type=text], form input[type=email], form input[type=password], form textarea {
+    border: 0px solid #000;
+    background-color: #000;
+    resize: vertical;
+}
+
+form input[type=submit] {
+    border: 0 solid #000;
+    border-top: 1px solid #000;
+}
+form input[type=submit]:hover {
+    color: #00F000;
+}
+
+.errorlist li {
+    color: #F00000;
+}
+

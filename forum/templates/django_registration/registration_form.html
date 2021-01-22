@@ -2,24 +2,11 @@
 {% block title %}Register{% endblock %}
 
 {% block content %}
-    <h1>Register</h1>
-    <br>
+    <div class="item">
+        <h1>Register</h1>
+    </div>
     <form method="post" action="">{% csrf_token %}
-        {{ form.username.label }}
-        {{ form.username }}
-        <br>
-
-        {{ form.email.label }}
-        {{ form.email }}
-        <br>
-
-        {{ form.password1.label }}
-        {{ form.password1 }}
-        <br>
-
-        {{ form.password2.label }}
-        {{ form.password2 }}
-        <br>
+        {{ form.as_p }}
 
         <input type="submit" value="Register">
     </form>

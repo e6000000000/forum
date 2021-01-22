@@ -1,3 +1,3 @@
-Hello from {{ site.name }}, {{ user }}.
+Hello from {{ site.name }}, {{ user.username }}.
 Follow the link to activate your account {{ scheme }}://{{ site.domain }}{% url 'django_registration_activate' activation_key %}
 Days to activate account remaining {{ expiration_days }}.

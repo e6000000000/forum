@@ -1,8 +1,9 @@
 {% extends 'base.html' %}
 {% block title %}Create thread{% endblock %}
 {% block content %}
-    <h1>Create thread</h1>
-    <br>
+    <div class="item">
+        <h1>Create thread</h1>
+    </div>
     <form method="post">{% csrf_token %}
         {{ form.as_p }}
         

@@ -1,16 +1,24 @@
 {% extends 'base.html' %}
 {% block title %}{{ section.title }}{% endblock %}
 {% block content %}
-    <h1>{{ section.title }}</h1>
-    <p>{{ section.description }}</p>
-    <p>author: {{ section.author }}</p>
-    <p>created: {{ section.creation_datetime }}</p>
-    <br>
-    <a href="{% url 'thread_create' section.pk %}" class="link">new</a>
-    <br>
-    <br>
-    {% for thread in section.threads.all %}
-        <a href="{% url 'thread_details' section.pk thread.pk %}" class="link">{{ thread.title }}</a>
-        <br>
-    {% endfor %}
+    <div class="item">
+        <div class="text">
+            <h1>{{ section.title }}</h1>
+            <p>{{ section.description }}</p>
+            {% if user.is_anonymous %}
+                <a href="{% url 'login' %}">Login to create new thread</a>
+            {% else %}
+                <a href="{% url 'thread_create' section.pk %}">Create new thread</a>
+            {% endif %}
+        </div>
+    </div>
+    <div class="list">
+        {% for thread in section.threads.all %}
+            <div class="item border">
+                <div class="text">
+                    <a href="{% url 'thread_details' section.pk thread.pk %}">{{ thread.title }}</a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
 {% endblock %}

@@ -1,19 +1,27 @@
 {% extends 'base.html' %}
 {% block title %}Replay{% endblock %}
 {% block content %}
-    <h1>Post</h1>
-    <br>
-    {% if post.reply_to %}
-        <p>reply to: {{ post.reply_to.author }}</p>
-    {% endif %}
-    <p>{{ post.text }}</p>
-    <p>author: {{ post.author }}</p>
-    <p>created: {{ post.creation_datetime }}</p>
-    <br>
-    <h1>Replay</h1>
-    <br>
-    <form method="post">{% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" value="Replay">
-    </form>
+    <div class="item">
+        <h1>Post</h1>
+    </div>
+    <div class="item">
+        <img src="{{ post.author.avatar.url }}" width="100" height="100">
+        <div class="text">
+            <p>{{ post.text }}</p>
+            {% if post.reply_to %}
+                    <p><span>Reply to:</span><a href="{% url 'profile' post.author.pk %}">{{ post.reply_to.author.username }}</a></p>
+            {% endif %}
+            <p><span>Author:</span><a href="{% url 'profile' post.author.pk %}">{{ post.author.username }}</a></p>
+            <p><span>Created:</span>{{ post.creation_datetime }}</p>
+        </div>
+    </div>
+    <div class="item">
+        <h1>Replay</h1>
+    </div>
+    <div class="item">
+        <form method="post">{% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit" value="Replay">
+        </form>
+    </div>
 {% endblock %}

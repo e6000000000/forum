@@ -1,22 +1,27 @@
 {% extends 'base.html' %}
 {% block title %}{{ thread.title }}{% endblock %}
 {% block content %}
-    <a href="{% url 'section_details' thread.section.pk %}" class="link">back to {{ thread.section.title }}</a>
+    <a href="{% url 'section_details' thread.section.pk %}">Back to {{ thread.section.title }}</a>
+    <div class="item">
+        <h1>{{ thread.title }}</h1>
+    </div>
     <br>
-    <h1>{{ thread.title }}</h1>
-    <p>closed: {{ thread.is_closed }}</p>
-    <p>author: {{ thread.author }}</p>
-    <p>created: {{ thread.creation_datetime }}</p>
-    <br>
-    {% for post in thread.posts.all %}
-        {% if post.reply_to %}
-            <p>reply to: {{ post.reply_to.author }}</p>
-        {% endif %}
-        <p>{{ post.text }}</p>
-        <p>author: {{ post.author }}</p>
-        <p>created: {{ post.creation_datetime }}</p>
-        <a href="{% url 'postreply_create' thread.section.pk thread.pk post.pk %}" class="link">reply</a>
-        <br>
-        <br>
-    {% endfor %}
+    <div class="list">
+        {% for post in thread.posts.all %}
+            <div class="item border">
+                <img src="{{ post.author.avatar.url }}" width="100" height="100">
+                <div class="text">
+                    <p>{{ post.text }}</p>
+                    <div class="item">
+                        {% if post.reply_to %}
+                            <p><span>Reply to:</span><a href="{% url 'profile' post.author.pk %}">{{ post.reply_to.author.username }}</a></p>
+                        {% endif %}
+                        <p><span>Author:</span><a href="{% url 'profile' post.author.pk %}">{{ post.author.username }}</a></p>
+                        <p><span>Created:</span>{{ post.creation_datetime }}</p>
+                        <a href="{% url 'postreply_create' thread.section.pk thread.pk post.pk %}"><span>To reply</span></a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
 {% endblock %}

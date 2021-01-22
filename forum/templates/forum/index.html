@@ -1,13 +1,24 @@
 {% extends 'base.html' %}
 {% block title %}Forum{% endblock %}
 {% block content %}
-    <h1>Forum sections</h1>
-    <a href="{% url 'section_create' %}">new</a>
-    <br>
-    <br>
-    {% for section in sections %}
-        <h3><a href="{% url 'section_details' section.pk %}" class="link">{{ section.title }}</a></h3>
-        <p>{{ section.description }}</p>
-        <br>
-    {% endfor %}
+    <div class="item">
+        <div class="text">
+            <h1>Forum sections</h1>
+            {% if user.is_anonymous %}
+            <a href="{% url 'login' %}">Login to create new section</a>
+            {% else %}
+            <a href="{% url 'section_create' %}">Create new section</a>
+            {% endif %}
+        </div>
+    </div>
+    <div class='list'>
+        {% for section in sections %}
+            <div class="item border">
+                <div class="text">
+                    <h3><a href="{% url 'section_details' section.pk %}">{{ section.title }}</a></h3>
+                    <p><span></span>{{ section.description }}</p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
 {% endblock %}

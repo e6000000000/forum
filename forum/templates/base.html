@@ -11,12 +11,12 @@
 <body>
     <header>
         <div class="header_links">
-            <a class="link header_link" href="{% url 'index' %}">General</a>
+            <a class="link header_link" href="{% url 'index' %}">G</a>
             {% if user.is_anonymous %}
                 <a class="link header_link" href="{% url 'django_registration_register' %}?next={{request.path}}">register</a>
                 <a class="link header_link" href="{% url 'login' %}?next={{request.path}}">login</a>
             {% else %}
-                <a class="link header_link" href="{% url 'profile' user.pk %}">{{ user }}</a>
+                <a class="link header_link" href="{% url 'profile' user.pk %}">{{ user.username }}</a>
                 <a class="link header_link" href="{% url 'logout' %}?next={{request.path}}">logout</a>
             {% endif %}
         </div>
@@ -25,7 +25,7 @@
     {% endblock %}
 
     <footer>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ultricies condimentum sagittis. Praesent cursus tincidunt faucibus. Sed eleifend enim ut tortor fringilla, vel posuere nibh rhoncus. Vestibulum dictum tempor interdum. Aliquam accumsan nunc eros, viverra consequat libero ultrices quis. Suspendisse auctor egestas augue vel sagittis. Nulla ac pellentesque odio. Nulla nec turpis a lacus lobortis varius. Nullam vestibulum porttitor accumsan. Praesent vehicula mollis neque, eget viverra odio eleifend nec. Nam malesuada accumsan leo, in dignissim nulla commodo et.</p>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
     </footer>
 </body>
 </html>

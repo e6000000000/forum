@@ -4,8 +4,9 @@
     <h1>Forum sections</h1>
     <a href="{% url 'section_create' %}">new</a>
     <br>
+    <br>
     {% for section in sections %}
-        <a href="{% url 'section_details' section.pk %}" class="link">{{ section.title }}</a>
+        <h3><a href="{% url 'section_details' section.pk %}" class="link">{{ section.title }}</a></h3>
         <p>{{ section.description }}</p>
         <br>
     {% endfor %}

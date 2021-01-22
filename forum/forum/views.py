@@ -96,8 +96,8 @@ class ThreadCreateView(CreateWithInlinesView):
             return HttpResponseBadRequest(f'section with pk={section_pk} does not exist')
 
         for formtype in inlines:
-            for form in formtype:
-                form.instance.author = self.request.user
+            for inline_form in formtype:
+                inline_form.instance.author = self.request.user
 
         return super().forms_valid(form, inlines)
 

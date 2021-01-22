@@ -40,9 +40,12 @@ class SectionCreateView(CreateView):
 
     def get_success_url(self, **kwargs):         
         if  kwargs != None:
-            return reverse_lazy('section_details', kwargs = {
-                'pk': self.object.pk
-            })
+            return reverse_lazy(
+                'section_details',
+                kwargs = {
+                    'pk': self.object.pk
+                }
+            )
 
     def form_valid(self, form):
         if self.request.user.is_anonymous:
@@ -78,10 +81,13 @@ class ThreadCreateView(CreateWithInlinesView):
 
     def get_success_url(self, **kwargs):
         if  kwargs != None:
-            return reverse_lazy('thread_details', kwargs = {
-                'section_pk': self.object.section.pk,
-                'pk': self.object.pk
-            })
+            return reverse_lazy(
+                'thread_details',
+                kwargs = {
+                    'section_pk': self.object.section.pk,
+                    'pk': self.object.pk
+                }
+            )
 
     def forms_valid(self, form, inlines):
         if self.request.user.is_anonymous:
@@ -93,7 +99,9 @@ class ThreadCreateView(CreateWithInlinesView):
         try:
             form.instance.section = models.Section.objects.get(pk=section_pk)
         except models.Section.DoesNotExist:
-            return HttpResponseBadRequest(f'section with pk={section_pk} does not exist')
+            return HttpResponseBadRequest(
+                f'section with pk={section_pk} does not exist'
+            )
 
         for formtype in inlines:
             for inline_form in formtype:
@@ -115,7 +123,9 @@ class PostReplyCreateView(CreateView):
         try:
             kwargs['post'] = models.Post.objects.get(pk=post_pk)
         except models.Post.DoesNotExist:
-            return HttpResponseBadRequest(f'post with pk={post_pk} does not exist')
+            return HttpResponseBadRequest(
+                f'post with pk={post_pk} does not exist'
+            )
 
         return super().get_context_data(**kwargs)
 
@@ -131,16 +141,23 @@ class PostReplyCreateView(CreateView):
             form.instance.reply_to = models.Post.objects.get(pk=post_pk)
             form.instance.thread = models.Thread.objects.get(pk=thread_pk)
         except models.Post.DoesNotExist:
-            return HttpResponseBadRequest(f'post with pk={post_pk} does not exist')
+            return HttpResponseBadRequest(
+                f'post with pk={post_pk} does not exist'
+            )
         except models.Thread.DoesNotExist:
-            return HttpResponseBadRequest(f'thread with pk={thread_pk} does not exist')
+            return HttpResponseBadRequest(
+                f'thread with pk={thread_pk} does not exist'
+            )
 
         return super().form_valid(form)
 
     def get_success_url(self, **kwargs):         
         if  kwargs != None:
-            return reverse_lazy('thread_details', kwargs = {
-                'section_pk': self.object.thread.section.pk,
-                'pk': self.object.thread.pk
-            })
+            return reverse_lazy(
+                'thread_details',
+                kwargs = {
+                    'section_pk': self.object.thread.section.pk,
+                    'pk': self.object.thread.pk
+                }
+            )
 

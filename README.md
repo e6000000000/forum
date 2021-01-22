@@ -4,14 +4,9 @@ the default internet forum. coded with python django.
 
 # Quick start
 
-first of all we should run a postgresql server
-```
-docker run --net=host rostgres
-```
-
+first of all we should run a [postgresql server](https://hub.docker.com/_/postgres)
 then create a database named forum (by default)
 ```
-docker exec -it <container id> bash
 psql -h localhost -p 5432 -U postgres
 CREATE DATABASE forum;
 ```
@@ -32,8 +27,8 @@ EMAIL_HOST_PASSWORD = 'yourpassword'
 
 build and start server
 ```
-docker build -t forum .
-docker run --net=host forum
+docker build -t forum:1 .
+docker run --net=host forum:1
 ```
 
 # Configuration

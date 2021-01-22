@@ -1,15 +1,29 @@
 from django.db import models
+from django.contrib.auth import get_user_model
 
 
 class Section(models.Model):
-    """Stores a section of forum,
+    """Stores a Section of forum,
     related to :model:`accounts.User`
     """
-    title = models.CharField(max_length=100, unique=True)
-    description = models.TextField(max_length=500)
-    author = models.ForeignKey('accounts.User', on_delete=models.CASCADE, null=True)
-    raiting = models.IntegerField(default=0)
-    creation_datetime = models.DateTimeField(auto_now_add=True)
+    title = models.CharField(
+        max_length=100,
+        unique=True
+    )
+    description = models.TextField(
+        max_length=500
+    )
+    author = models.ForeignKey(
+        get_user_model(),
+        on_delete=models.CASCADE,
+        null=True
+    )
+    raiting = models.IntegerField(
+        default=0
+    )
+    creation_datetime = models.DateTimeField(
+        auto_now_add=True
+    )
 
     def __str__(self):
         return self.title
@@ -17,16 +31,33 @@ class Section(models.Model):
         return self.title
 
 class Thread(models.Model):
-    """Stores a thread of section,
+    """Stores a Thread of Section,
     related to :model:`accounts.User` and :model:`forum.Section`
     """
-    title = models.CharField(max_length=100, unique=True)
-    author = models.ForeignKey('accounts.User', on_delete=models.CASCADE, null=True)
-    raiting = models.IntegerField(default=0)
-    is_closed = models.BooleanField(default=False)
-    creation_datetime = models.DateTimeField(auto_now_add=True)
-
-    section = models.ForeignKey(Section, on_delete=models.CASCADE, related_name='threads', related_query_name="thread")
+    title = models.CharField(
+        max_length=100,
+        unique=True
+    )
+    author = models.ForeignKey(
+        get_user_model(),
+        on_delete=models.CASCADE,
+        null=True
+    )
+    raiting = models.IntegerField(
+        default=0
+    )
+    is_closed = models.BooleanField(
+        default=False
+    )
+    creation_datetime = models.DateTimeField(
+        auto_now_add=True
+    )
+    section = models.ForeignKey(
+        Section,
+        on_delete=models.CASCADE,
+        related_name='threads',
+        related_query_name="thread"
+    )
 
     def __str__(self):
         return self.title
@@ -34,12 +65,20 @@ class Thread(models.Model):
         return self.title
 
 class Post(models.Model):
-    """Stores a forum thread,
+    """Stores a Post of Thread,
     related to :model:`accounts.User` and :model:`forum.Section`
     """
-    text = models.TextField(max_length=2000)
-    author = models.ForeignKey('accounts.User', on_delete=models.CASCADE, null=True)
-    creation_datetime = models.DateTimeField(auto_now_add=True)
+    text = models.TextField(
+        max_length=2000
+    )
+    author = models.ForeignKey(
+        get_user_model(),
+        on_delete=models.CASCADE,
+        null=True
+    )
+    creation_datetime = models.DateTimeField(
+        auto_now_add=True
+    )
 
     reply_to = models.ForeignKey(
         'Post',
@@ -49,7 +88,12 @@ class Post(models.Model):
         null=True,
         blank=True
     )
-    thread = models.ForeignKey(Thread, on_delete=models.CASCADE, related_name='posts', related_query_name='post')
+    thread = models.ForeignKey(
+        Thread,
+        on_delete=models.CASCADE,
+        related_name='posts',
+        related_query_name='post'
+    )
 
     def __str__(self):
         return self.text

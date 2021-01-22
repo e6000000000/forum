@@ -139,18 +139,19 @@ STATICFILES_DIRS = [
     BASE_DIR / "static"
 ]
 
+# media
 MEDIA_ROOT = BASE_DIR / 'media'
-
 MEDIA_URL = '/media/'
 
 ACCOUNT_ACTIVATION_DAYS = 7 # One-week activation window
 
-AUTH_USER_EMAIL_UNIQUE = False
+# email
+AUTH_USER_EMAIL_UNIQUE = True
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'forum@gmail.com'
 
 
-#custom user model
+# custom user model
 AUTH_USER_MODEL = 'accounts.User'

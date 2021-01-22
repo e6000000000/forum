@@ -15,14 +15,28 @@ class ProfileDetailView(DetailView):
     template_name = 'accounts/profile.html'
 
 class ProfileUpdateView(UpdateView):
+    """
+    Display form to update a :model:`auth.User`.
+    """
     model = User
     context_object_name = 'account'
     template_name = 'accounts/profile_edit.html'
-    fields = ['username', 'first_name', 'last_name', 'email', 'bio', 'avatar']
+    fields = [
+        'username',
+        'first_name',
+        'last_name',
+        'email',
+        'bio',
+        'avatar',
+    ]
+
     def get_success_url(self):
-        return reverse_lazy('profile', kwargs={
-            'pk': self.object.pk
-        })
+        return reverse_lazy(
+            'profile',
+            kwargs={
+                'pk': self.object.pk
+            }
+        )
 
     def get_object(self):
         return self.request.user

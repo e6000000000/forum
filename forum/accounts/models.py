@@ -16,3 +16,10 @@ class User(AbstractUser):
         upload_to='avatars',
         default='default.png'
     )
+    email = models.EmailField(
+        'email address',
+        unique=True
+    )
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username']

@@ -177,6 +177,12 @@ class ThreadUpdateView(View):
             return HttpResponseBadRequest(
                 f'thread with pk={thread_pk} does not exist'
             )
+
+        if self.thread.author != self.request.user:
+            return HttpResponseBadRequest(
+                f'only author can close or open their threads'
+            ) 
+
         self.thread.is_closed = not self.thread.is_closed
         self.thread.save()
         return HttpResponseRedirect(

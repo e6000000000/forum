@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     #additional django apps
     'extra_views',
     'django_registration',
+    'captcha',
 
     #django apps
     'django.contrib.admin',
@@ -145,7 +146,7 @@ MEDIA_URL = '/media/'
 
 ACCOUNT_ACTIVATION_DAYS = 7 # One-week activation window
 
-# email
+# email server
 AUTH_USER_EMAIL_UNIQUE = True
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
@@ -160,3 +161,6 @@ AUTH_USER_MODEL = 'accounts.User'
 #SESSION_COOKIE_SECURE = True
 #CSRF_COOKIE_SECURE = True
 #SECURE_SSL_REDIRECT = True
+
+# recaptcha
+RECAPTCHA_REQUIRED_SCORE = 0.85

@@ -135,6 +135,10 @@ form * {
     box-shadow: none;
 }
 
+form script {
+    display: none;
+}
+
 form input[type=text], form input[type=email], form input[type=password], form textarea {
     border: 0px solid #000;
     background-color: #000;

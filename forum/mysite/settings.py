@@ -155,3 +155,8 @@ DEFAULT_FROM_EMAIL = 'forum@gmail.com'
 
 # custom user model
 AUTH_USER_MODEL = 'accounts.User'
+
+# https
+#SESSION_COOKIE_SECURE = True
+#CSRF_COOKIE_SECURE = True
+#SECURE_SSL_REDIRECT = True

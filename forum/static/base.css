@@ -6,14 +6,28 @@
     font-family: monospace;
 }
 
-body {
+html, body {
     background-color: #101010;
+    height: 100%;
+}
+
+*::-webkit-scrollbar {
+    width: 1em;
+}
+   
+*::-webkit-scrollbar-track {
+    background-color: #0A0A0A;
+}
+
+*::-webkit-scrollbar-thumb {
+    background-color: rgb(0, 0, 0);
+    outline: 0 solid #000;
 }
 
 header {
     background-color: #000;
     width: 100%;
-    height: 40pt;
+    height: 28pt;
     left: 0;
     top: 0;
 }
@@ -23,6 +37,15 @@ header {
     display: table-cell;
     vertical-align: middle;
     padding-left: 6pt;
+    float: left;
+}
+
+.header_account {
+    height: inherit;
+    display: table-cell;
+    vertical-align: middle;
+    padding-left: 6pt;
+    float: right;
 }
 
 a {
@@ -38,12 +61,15 @@ a:hover {
     font-size: 22pt;
 }
 
+.content {
+    min-height: 100%;
+}
+
 footer {
-    background-color: #303030;
+    background-color: #0A0A0A;
     width: 100%;
-    height: 40pt;
-    position: fixed;
-    bottom: 0;
+    height: 10pt;
+    float: bottom;
 }
 
 .border {
@@ -70,9 +96,14 @@ footer {
     margin-right: 4pt;
 }
 
-.item>img {
-    display: inline-block;
-    vertical-align: top;
+.item img {
+    float: left;
+    margin-right: 4pt;
+}
+
+.no_word_wrap {
+    word-wrap: normal;
+    white-space: nowrap;
 }
 
 .list {

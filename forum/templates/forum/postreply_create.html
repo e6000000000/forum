@@ -5,14 +5,13 @@
         <h1>Post</h1>
     </div>
     <div class="item">
-        <img src="{{ post.author.avatar.url }}" width="100" height="100">
         <div class="text">
-            <p>{{ post.text }}</p>
+            <p><img src="{{ post.author.avatar.url }}" width="100" height="100">{{ post.text }}</p>
             {% if post.reply_to %}
-                    <p><span>Reply to:</span><a href="{% url 'profile' post.author.pk %}">{{ post.reply_to.author.username }}</a></p>
+                <p class="no_word_wrap"><span>Reply to:</span><a href="{% url 'profile' post.author.pk %}">{{ post.reply_to.author.username }}</a></p>
             {% endif %}
-            <p><span>Author:</span><a href="{% url 'profile' post.author.pk %}">{{ post.author.username }}</a></p>
-            <p><span>Created:</span>{{ post.creation_datetime }}</p>
+            <p class="no_word_wrap"p><span>Author:</span><a href="{% url 'profile' post.author.pk %}">{{ post.author.username }}</a></p>
+            <p class="no_word_wrap"><span>Created:</span>{{ post.creation_datetime.date }}</p>
         </div>
     </div>
     <div class="item">

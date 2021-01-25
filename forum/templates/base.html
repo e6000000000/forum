@@ -12,6 +12,8 @@
     <header>
         <div class="header_links">
             <a class="link header_link" href="{% url 'index' %}">G</a>
+        </div>
+        <div class="header_account">
             {% if user.is_anonymous %}
                 <a class="link header_link" href="{% url 'django_registration_register' %}?next={{request.path}}">register</a>
                 <a class="link header_link" href="{% url 'login' %}?next={{request.path}}">login</a>
@@ -21,11 +23,13 @@
             {% endif %}
         </div>
     </header>
-    {% block content %}
-    {% endblock %}
+    <div class="content">
+        {% block content %}
+        {% endblock %}
+    </div>
 
     <footer>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+        <a href="https://github.com/e6000000000/forum">GitHub</a>
     </footer>
 </body>
 </html>

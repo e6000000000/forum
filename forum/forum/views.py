@@ -151,7 +151,7 @@ class PostReplyCreateView(CreateView):
 
         return super().form_valid(form)
 
-    def get_success_url(self, **kwargs):         
+    def get_success_url(self, **kwargs):
         if  kwargs != None:
             return reverse_lazy(
                 'thread_details',

@@ -16,7 +16,7 @@
         {% for thread in section.threads.all %}
             <div class="item border">
                 <div class="text">
-                    <a href="{% url 'thread_details' section.pk thread.pk %}">{{ thread.title }}</a>
+                    <a href="{% url 'thread_details' section.pk thread.pk %}">{{ thread.title }}</a>{% if thread.is_closed %}<span class="red">Closed</span>{% endif %}
                 </div>
             </div>
         {% endfor %}

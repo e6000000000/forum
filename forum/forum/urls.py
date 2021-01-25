@@ -34,4 +34,9 @@ urlpatterns = [
         views.SectionCreateView.as_view(),
         name='section_create'
     ),
+    path(
+        'section/<int:section_pk>/thread_update/<int:pk>/',
+        views.ThreadUpdateView.as_view(),
+        name='thread_update'
+    ),
 ]

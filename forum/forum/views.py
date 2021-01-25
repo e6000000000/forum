@@ -1,6 +1,6 @@
 from django.http import HttpResponseBadRequest, HttpResponseRedirect
 from django.urls import reverse_lazy
-from django.views.generic import ListView, DetailView, CreateView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, View
 from extra_views import CreateWithInlinesView, InlineFormSet
 
 from . import models
@@ -149,6 +149,11 @@ class PostReplyCreateView(CreateView):
                 f'thread with pk={thread_pk} does not exist'
             )
 
+        if form.instance.thread.is_closed:
+            return HttpResponseBadRequest(
+                f'thread with pk={thread_pk} is closed'
+            )
+
         return super().form_valid(form)
 
     def get_success_url(self, **kwargs):
@@ -158,6 +163,35 @@ class PostReplyCreateView(CreateView):
                 kwargs = {
                     'section_pk': self.object.thread.section.pk,
                     'pk': self.object.thread.pk
+                }
+            )
+
+class ThreadUpdateView(View):
+    def get(self, *args, **kwargs):
+        thread_pk = kwargs['pk']
+        try:
+            self.thread = models.Thread.objects.get(
+                pk=thread_pk
+            )
+        except models.Thread.DoesNotExist:
+            return HttpResponseBadRequest(
+                f'thread with pk={thread_pk} does not exist'
+            )
+        self.thread.is_closed = not self.thread.is_closed
+        self.thread.save()
+        return HttpResponseRedirect(
+            self.get_success_url(
+                **kwargs
+            )
+        )
+    
+    def get_success_url(self, **kwargs):
+        if  kwargs != None:
+            return reverse_lazy(
+                'thread_details',
+                kwargs = {
+                    'section_pk': self.thread.section.pk,
+                    'pk': self.thread.pk
                 }
             )
 

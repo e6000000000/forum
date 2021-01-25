@@ -3,7 +3,10 @@
 {% block content %}
     <a href="{% url 'section_details' thread.section.pk %}">Back to {{ thread.section.title }}</a>
     <div class="item">
-        <h1>{{ thread.title }}</h1>
+        <h1>{{ thread.title }}{% if thread.is_closed %}<span class="red">Closed</span>{% endif %}</h1>
+        {% if thread.author == user %}
+            <a href="{% url 'thread_update' thread.section.pk thread.pk %}">Close/Open</a>
+        {% endif %}
     </div>
     <br>
     <div class="list">
@@ -16,7 +19,9 @@
                     {% endif %}
                     <p class="no_word_wrap"p><span>Author:</span><a href="{% url 'profile' post.author.pk %}">{{ post.author.username }}</a></p>
                     <p class="no_word_wrap"><span>Created:</span>{{ post.creation_datetime.date }}</p>
-                    <p><a href="{% url 'postreply_create' thread.section.pk thread.pk post.pk %}"><span>Reply</span></a></p>
+                    {% if not thread.is_closed %}
+                        <p><a href="{% url 'postreply_create' thread.section.pk thread.pk post.pk %}"><span class="white">Reply</span></a></p>
+                    {% endif %}
                 </div>
             </div>
         {% endfor %}

@@ -5,10 +5,12 @@ The default internet forum. Coded with python django.
 # Installation
 
 First of all we should run a [postgresql server](https://hub.docker.com/_/postgres).
-Then create a database named forum (by default).
+Then create a database named forum (by default) and configure it1.
 ```bash
 psql -h localhost -p 5432 -U postgres
 CREATE DATABASE forum;
+CREATE EXTENSION unaccent;
+CREATE EXTENSION pg_trgm;
 ```
 
 Clone forum.

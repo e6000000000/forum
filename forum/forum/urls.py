@@ -39,4 +39,9 @@ urlpatterns = [
         views.ThreadUpdateView.as_view(),
         name='thread_update'
     ),
+    path(
+        'search/',
+        views.SearchResultsView.as_view(),
+        name='search'
+    ),
 ]

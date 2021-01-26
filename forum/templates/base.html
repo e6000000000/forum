@@ -12,6 +12,10 @@
     <header>
         <div class="header_links">
             <a class="link header_link" href="{% url 'index' %}">G</a>
+            <form class="search" method="get" action="{% url 'search' %}">
+                <input type="text" name="text" required="">
+                <input type="submit" value="Search">
+            </form>
         </div>
         <div class="header_account">
             {% if user.is_anonymous %}

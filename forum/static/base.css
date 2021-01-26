@@ -153,6 +153,29 @@ form input[type=submit]:hover {
     color: #00F000;
 }
 
+.search {
+    display: inline;
+    margin-left: 4pt;
+    margin-right: 4pt;
+    border: 1px solid #FFFFF0;
+    padding: 1pt;
+}
+
+.search * {
+    display: inline;
+    width: auto;
+    outline: 0px solid transparent;
+    box-shadow: none;
+    padding: 1pt;
+}
+
+.search input[type=submit] {
+    border: 0 solid #000;
+    border-top: 0px solid #000;
+    border-left: 1px solid #FFFFF0;
+    padding: 1pt;
+}
+
 .errorlist li {
     color: #F00000;
 }

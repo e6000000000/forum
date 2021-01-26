@@ -1,9 +1,10 @@
 from django.http import HttpResponseBadRequest, HttpResponseRedirect
 from django.urls import reverse_lazy
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, View
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, View, TemplateView
 from extra_views import CreateWithInlinesView, InlineFormSet
 
 from . import models
+import accounts
 
 
 class SectionListView(ListView):
@@ -200,4 +201,40 @@ class ThreadUpdateView(View):
                     'pk': self.thread.pk
                 }
             )
+
+class SearchResultsView(TemplateView):
+    template_name = 'forum/search_result.html'
+
+    def get_context_data(self, **kwargs):
+        text = self.request.GET.get('text', '')
+
+        kwargs['sections'] = models.Section.objects.filter(
+            title__unaccent__lower__trigram_similar=text
+        )
+        kwargs['sections'] = kwargs['sections'].union(
+            kwargs['sections'],
+            models.Section.objects.filter(
+                description__search=text
+            )
+        )
+
+        kwargs['threads'] = models.Thread.objects.filter(
+            title__unaccent__lower__trigram_similar=text
+        )
+
+        kwargs['accounts'] = accounts.models.User.objects.filter(
+            username__unaccent__lower__trigram_similar=text
+        )
+        kwargs['accounts'].union(
+            accounts.models.User.objects.filter(
+                first_name__unaccent__lower__trigram_similar=text
+            )
+        )
+        kwargs['accounts'].union(
+            accounts.models.User.objects.filter(
+                last_name__unaccent__lower__trigram_similar=text
+            )
+        )
+
+        return super().get_context_data(**kwargs)
 

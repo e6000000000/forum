@@ -1,6 +1,10 @@
 from django.db import models
+from django.db.models import functions
 from django.contrib.auth import get_user_model
 
+
+models.CharField.register_lookup(functions.Lower)
+models.TextField.register_lookup(functions.Lower)
 
 class Section(models.Model):
     """Stores a Section of forum,

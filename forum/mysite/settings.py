@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.postgres',
 ]
 
 MIDDLEWARE = [
@@ -151,7 +152,7 @@ AUTH_USER_EMAIL_UNIQUE = True
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-DEFAULT_FROM_EMAIL = 'forum@gmail.com'
+DEFAULT_FROM_EMAIL = 'info@forum.com'
 
 
 # custom user model

@@ -212,7 +212,6 @@ class SearchResultsView(TemplateView):
             title__unaccent__lower__trigram_similar=text
         )
         kwargs['sections'] = kwargs['sections'].union(
-            kwargs['sections'],
             models.Section.objects.filter(
                 description__search=text
             )
@@ -225,12 +224,12 @@ class SearchResultsView(TemplateView):
         kwargs['accounts'] = accounts.models.User.objects.filter(
             username__unaccent__lower__trigram_similar=text
         )
-        kwargs['accounts'].union(
+        kwargs['accounts'] = kwargs['accounts'].union(
             accounts.models.User.objects.filter(
                 first_name__unaccent__lower__trigram_similar=text
             )
         )
-        kwargs['accounts'].union(
+        kwargs['accounts'] = kwargs['accounts'].union(
             accounts.models.User.objects.filter(
                 last_name__unaccent__lower__trigram_similar=text
             )

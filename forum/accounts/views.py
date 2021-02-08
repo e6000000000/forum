@@ -8,15 +8,16 @@ from .models import User
 
 class ProfileDetailView(DetailView):
     """
-    Display a :model:`auth.User`.
+    Display a `auth.User` model.
     """
     model = User
     context_object_name = 'account'
     template_name = 'accounts/profile.html'
 
+
 class ProfileUpdateView(UpdateView):
     """
-    Display form to update a :model:`auth.User`.
+    Display form to update a `auth.User` model.
     """
     model = User
     context_object_name = 'account'
@@ -29,14 +30,6 @@ class ProfileUpdateView(UpdateView):
         'bio',
         'avatar',
     ]
-
-    def get_success_url(self):
-        return reverse_lazy(
-            'profile',
-            kwargs={
-                'pk': self.object.pk
-            }
-        )
 
     def get_object(self):
         return self.request.user

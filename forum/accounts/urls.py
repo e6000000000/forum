@@ -22,7 +22,7 @@ urlpatterns = [
         include('django.contrib.auth.urls')
     ),
     path(
-        'profile/<int:pk>',
+        'profile/<int:pk>/',
         views.ProfileDetailView.as_view(),
         name='profile'
     ),

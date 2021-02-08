@@ -1,66 +1,64 @@
 from django.http import HttpResponseBadRequest, HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, View, TemplateView
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 from extra_views import CreateWithInlinesView, InlineFormSet
 
-from . import models
-import accounts
+from .exceptions import *
+from .models import *
+from .services import *
 
 
 class SectionListView(ListView):
     """
-    Display a list of :model:`forum.Section`.
+    Display a list of `forum.Section` model.
     """
-    model = models.Section
+    model = Section
     context_object_name = 'sections'
     template_name = 'forum/index.html'
 
+
 class SectionDetailView(DetailView):
     """
-    Display a :model:`forum.Section`.
+    Display a `forum.Section` model.
     """
-    model = models.Section
+    model = Section
     context_object_name = 'section'
     template_name = 'forum/section_details.html'
 
+
 class ThreadDetailView(DetailView):
     """
-    Display a :model:`forum.Thread`.
+    Display a forum.Thread` model.
     """
-    model = models.Thread
+    model = Thread
     context_object_name = 'thread'
     template_name = 'forum/thread_details.html'
 
+
+@method_decorator(login_required, name='dispatch')
 class SectionCreateView(CreateView):
     """
-    Display a creation form of :model:`forum.Section`
+    Display a creation form for `forum.Section` model
     """
-    model = models.Section
+    model = Section
     template_name = 'forum/section_create.html'
     fields = ['title', 'description']
 
-    def get_success_url(self, **kwargs):         
-        if  kwargs != None:
-            return reverse_lazy(
-                'section_details',
-                kwargs = {
-                    'pk': self.object.pk
-                }
-            )
-
     def form_valid(self, form):
-        if self.request.user.is_anonymous:
-            return HttpResponseRedirect(reverse_lazy('login'))
-
-        form.instance.author = self.request.user
-        
+        self._before_form_validation(form)
         return super().form_valid(form)
+
+    def _before_form_validation(self, form):
+        form.instance.author = self.request.user
+
 
 class PostInline(InlineFormSet):
     """
-    InlineFormSet of :model:`forum.Post`
+    InlineFormSet of `forum.Post` model
     """
-    model = models.Post
+    model = Post
     fields = ['text']
 
     factory_kwargs = {
@@ -69,61 +67,55 @@ class PostInline(InlineFormSet):
         'extra': 1,
     }
 
+
+@method_decorator(login_required, name='dispatch')
 class ThreadCreateView(CreateWithInlinesView):
     """
-    Display a creation form of :model:`forum.Thread` and 
-    first :model:`forum.Post` to this Thread
+    Display a creation form for `forum.Thread` model and 
+    first `forum.Post` model to this Thread
     """
-    model = models.Thread
+    model = Thread
     inlines = [PostInline]
 
     template_name = 'forum/thread_create.html'
     fields = ['title']
 
-    def get_success_url(self, **kwargs):
-        if  kwargs != None:
-            return reverse_lazy(
-                'thread_details',
-                kwargs = {
-                    'section_pk': self.object.section.pk,
-                    'pk': self.object.pk
-                }
-            )
-
     def forms_valid(self, form, inlines):
-        if self.request.user.is_anonymous:
-            return HttpResponseRedirect(reverse_lazy('login'))
-
-        section_pk = self.kwargs['section_pk']
-
-        form.instance.author = self.request.user
         try:
-            form.instance.section = models.Section.objects.get(pk=section_pk)
-        except models.Section.DoesNotExist:
+            self._before_forms_validation(form, inlines)
+        except Section.DoesNotExist:
             return HttpResponseBadRequest(
                 f'section with pk={section_pk} does not exist'
             )
 
+        return super().forms_valid(form, inlines)
+
+    def _before_forms_validation(self, form, inlines):
+        section_pk = self.kwargs['section_pk']
+
+        form.instance.author = self.request.user
+        form.instance.section = Section.objects.get(pk=section_pk)
+    
         for formtype in inlines:
             for inline_form in formtype:
                 inline_form.instance.author = self.request.user
 
-        return super().forms_valid(form, inlines)
 
+@method_decorator(login_required, name='dispatch')
 class PostReplyCreateView(CreateView):
     """
-    Display a creation form of :model:`forum.Post` 
-    which is a reply to some :model:`forum.Post` in the same :model:`forum.Thread`
+    Display a creation form for `forum.Post` model 
+    which is a reply to some `forum.Post` model in the same `forum.Thread` model
     """
-    model = models.Post
+    model = Post
     template_name = 'forum/postreply_create.html'
     fields = ['text']
 
     def get_context_data(self, **kwargs):
         post_pk = self.kwargs['post_pk']
         try:
-            kwargs['post'] = models.Post.objects.get(pk=post_pk)
-        except models.Post.DoesNotExist:
+            kwargs['post'] = Post.objects.get(pk=post_pk)
+        except Post.DoesNotExist:
             return HttpResponseBadRequest(
                 f'post with pk={post_pk} does not exist'
             )
@@ -131,109 +123,74 @@ class PostReplyCreateView(CreateView):
         return super().get_context_data(**kwargs)
 
     def form_valid(self, form):
-        if self.request.user.is_anonymous:
-            return HttpResponseRedirect(reverse_lazy('login'))
-
+        try:
+            self._before_form_validation(form)
+        except Post.DoesNotExist:
+            return HttpResponseBadRequest(
+                f'post with pk={post_pk} does not exist'
+            )
+        except Thread.DoesNotExist:
+            return HttpResponseBadRequest(
+                f'thread with pk={thread_pk} does not exist'
+            )
+        except ThreadClosed:
+            return HttpResponseBadRequest(
+                f'thread with pk={thread_pk} is closed'
+            )
+        
+        return super().form_valid(form)
+    
+    def _before_form_validation(self, form):
         post_pk = self.kwargs['post_pk']
         thread_pk = self.kwargs['thread_pk']
 
         form.instance.author = self.request.user
-        try:
-            form.instance.reply_to = models.Post.objects.get(pk=post_pk)
-            form.instance.thread = models.Thread.objects.get(pk=thread_pk)
-        except models.Post.DoesNotExist:
-            return HttpResponseBadRequest(
-                f'post with pk={post_pk} does not exist'
-            )
-        except models.Thread.DoesNotExist:
-            return HttpResponseBadRequest(
-                f'thread with pk={thread_pk} does not exist'
-            )
+        form.instance.reply_to = Post.objects.get(
+            pk=post_pk
+        )
+        form.instance.thread = Thread.objects.get(
+            pk=thread_pk
+        )
 
         if form.instance.thread.is_closed:
-            return HttpResponseBadRequest(
-                f'thread with pk={thread_pk} is closed'
-            )
+            raise ThreadClosed()
 
-        return super().form_valid(form)
 
-    def get_success_url(self, **kwargs):
-        if  kwargs != None:
-            return reverse_lazy(
-                'thread_details',
-                kwargs = {
-                    'section_pk': self.object.thread.section.pk,
-                    'pk': self.object.thread.pk
-                }
-            )
-
+@method_decorator(login_required, name='dispatch')
 class ThreadUpdateView(View):
+    """
+    Toggle `is_closed` bool variable of `forum.Thread` model
+    """
     def get(self, *args, **kwargs):
         thread_pk = kwargs['pk']
+
         try:
-            self.thread = models.Thread.objects.get(
-                pk=thread_pk
+            self.thread = toggle_thread_is_closed(
+                thread_pk,
+                self.request.user
             )
-        except models.Thread.DoesNotExist:
+        except PermissionsDenied:
+            return HttpResponseBadRequest(
+                f'only author can close or open their threads'
+            )
+        except Thread.DoesNotExist:
             return HttpResponseBadRequest(
                 f'thread with pk={thread_pk} does not exist'
             )
 
-        if self.thread.author != self.request.user:
-            return HttpResponseBadRequest(
-                f'only author can close or open their threads'
-            ) 
-
-        self.thread.is_closed = not self.thread.is_closed
-        self.thread.save()
         return HttpResponseRedirect(
-            self.get_success_url(
-                **kwargs
-            )
+            self.thread.get_absolute_url()
         )
-    
-    def get_success_url(self, **kwargs):
-        if  kwargs != None:
-            return reverse_lazy(
-                'thread_details',
-                kwargs = {
-                    'section_pk': self.thread.section.pk,
-                    'pk': self.thread.pk
-                }
-            )
+
 
 class SearchResultsView(TemplateView):
+    """
+    Display results of forum search
+    """
     template_name = 'forum/search_result.html'
 
     def get_context_data(self, **kwargs):
         text = self.request.GET.get('text', '')
-
-        kwargs['sections'] = models.Section.objects.filter(
-            title__unaccent__lower__trigram_similar=text
-        )
-        kwargs['sections'] = kwargs['sections'].union(
-            models.Section.objects.filter(
-                description__search=text
-            )
-        )
-
-        kwargs['threads'] = models.Thread.objects.filter(
-            title__unaccent__lower__trigram_similar=text
-        )
-
-        kwargs['accounts'] = accounts.models.User.objects.filter(
-            username__unaccent__lower__trigram_similar=text
-        )
-        kwargs['accounts'] = kwargs['accounts'].union(
-            accounts.models.User.objects.filter(
-                first_name__unaccent__lower__trigram_similar=text
-            )
-        )
-        kwargs['accounts'] = kwargs['accounts'].union(
-            accounts.models.User.objects.filter(
-                last_name__unaccent__lower__trigram_similar=text
-            )
-        )
-
+        kwargs.update(forum_search(text))
         return super().get_context_data(**kwargs)
 

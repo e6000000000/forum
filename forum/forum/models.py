@@ -1,6 +1,7 @@
 from django.db import models
 from django.db.models import functions
 from django.contrib.auth import get_user_model
+from django.urls import reverse_lazy
 
 
 models.CharField.register_lookup(functions.Lower)
@@ -28,6 +29,14 @@ class Section(models.Model):
     creation_datetime = models.DateTimeField(
         auto_now_add=True
     )
+
+    def get_absolute_url(self):
+        return reverse_lazy(
+            'section_details',
+            kwargs={
+                'pk': self.pk,
+            }
+        )
 
     def __str__(self):
         return self.title
@@ -62,6 +71,15 @@ class Thread(models.Model):
         related_name='threads',
         related_query_name="thread"
     )
+
+    def get_absolute_url(self):
+        return reverse_lazy(
+            'thread_details',
+            kwargs={
+                'section_pk': self.section.pk,
+                'pk': self.pk,
+            }
+        )
 
     def __str__(self):
         return self.title
@@ -99,6 +117,9 @@ class Post(models.Model):
         related_query_name='post'
     )
 
+    def get_absolute_url(self):
+        return self.thread.get_absolute_url()
+    
     def __str__(self):
         return self.text
     def __repr__(self):

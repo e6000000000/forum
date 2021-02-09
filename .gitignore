@@ -1,8 +1,8 @@
-# secret keys passwords and sometheing like that
-secret_settings.py
-
 #media
 media/
+
+#logs
+logs/
 
 #visual studio code
 .vscode

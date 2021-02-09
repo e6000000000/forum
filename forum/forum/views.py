@@ -4,11 +4,15 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, V
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from extra_views import CreateWithInlinesView
+import logging
 
 from core.exceptions import *
 from .models import *
 from .services import *
 from core.views import BaseView
+
+
+logger = logging.getLogger(__name__)
 
 
 class SectionListView(BaseView, ListView):
@@ -69,6 +73,7 @@ class ThreadCreateView(BaseView, CreateWithInlinesView):
 
     def forms_valid(self, form, inlines):
         try:
+            section_pk = self.kwargs['section_pk']
             self._before_forms_validation(form, inlines)
         except Section.DoesNotExist:
             raise HttpError(
@@ -113,6 +118,8 @@ class PostReplyCreateView(BaseView, CreateView):
 
     def form_valid(self, form):
         try:
+            post_pk = self.kwargs['post_pk']
+            thread_pk = self.kwargs['thread_pk']
             self._before_form_validation(form)
         except Post.DoesNotExist:
             raise HttpError(

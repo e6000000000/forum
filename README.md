@@ -5,7 +5,7 @@ The default internet forum. Coded with python django.
 # Installation
 
 First of all we should run a [postgresql server](https://hub.docker.com/_/postgres).
-Then create a database named forum (by default) and configure it.
+Then create a database named `forum` (by default) and configure it.
 ```bash
 psql -h localhost -p 5432 -U postgres
 CREATE DATABASE forum;
@@ -25,7 +25,7 @@ You can get recaptcha site key and recapthca private key [there](https://www.goo
 Now you can build and start server.
 ```bash
 docker build -t forum:1 .
-docker run --net=host --env-file env.list -v ~/forummedia:/code/media forum:1
+docker run --net=host --env-file env.list -v ~/forummedia:/code/media ~/forumlogs:/code/logs forum:1
 ```
 
 # Configuration

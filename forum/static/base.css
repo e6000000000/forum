@@ -82,16 +82,16 @@ footer {
     padding: 2pt;
 }
 
-.item .text {
+.text {
     display: inline-block;
 }
 
-.item .text>p {
+.text>p {
     margin-left: 4pt;
     margin-right: 4pt;
 }
 
-.item .text>a {
+.text>a {
     margin-left: 4pt;
     margin-right: 4pt;
 }
@@ -186,5 +186,9 @@ form input[type=submit]:hover {
 
 .white {
     color: #FFFFF0;
+}
+
+.multiline {
+  white-space: pre-wrap;
 }
 

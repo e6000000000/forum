@@ -1,11 +1,26 @@
 from typing import Any
 from django.contrib.auth import get_user_model
+from extra_views import InlineFormSet
 
-from .exceptions import *
+from core.exceptions import *
 from .models import *
 
 
 User = get_user_model()
+
+
+class PostInline(InlineFormSet):
+    """
+    InlineFormSet of `forum.Post` model
+    """
+    model = Post
+    fields = ['text']
+
+    factory_kwargs = {
+        'can_delete': False,
+        'can_order': False,
+        'extra': 1,
+    }
 
 
 def forum_search(text: str) -> dict:

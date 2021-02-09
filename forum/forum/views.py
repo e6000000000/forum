@@ -3,14 +3,15 @@ from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, View, TemplateView
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-from extra_views import CreateWithInlinesView, InlineFormSet
+from extra_views import CreateWithInlinesView
 
-from .exceptions import *
+from core.exceptions import *
 from .models import *
 from .services import *
+from core.views import BaseView
 
 
-class SectionListView(ListView):
+class SectionListView(BaseView, ListView):
     """
     Display a list of `forum.Section` model.
     """
@@ -19,7 +20,7 @@ class SectionListView(ListView):
     template_name = 'forum/index.html'
 
 
-class SectionDetailView(DetailView):
+class SectionDetailView(BaseView, DetailView):
     """
     Display a `forum.Section` model.
     """
@@ -28,7 +29,7 @@ class SectionDetailView(DetailView):
     template_name = 'forum/section_details.html'
 
 
-class ThreadDetailView(DetailView):
+class ThreadDetailView(BaseView, DetailView):
     """
     Display a forum.Thread` model.
     """
@@ -38,7 +39,7 @@ class ThreadDetailView(DetailView):
 
 
 @method_decorator(login_required, name='dispatch')
-class SectionCreateView(CreateView):
+class SectionCreateView(BaseView, CreateView):
     """
     Display a creation form for `forum.Section` model
     """
@@ -54,22 +55,8 @@ class SectionCreateView(CreateView):
         form.instance.author = self.request.user
 
 
-class PostInline(InlineFormSet):
-    """
-    InlineFormSet of `forum.Post` model
-    """
-    model = Post
-    fields = ['text']
-
-    factory_kwargs = {
-        'can_delete': False,
-        'can_order': False,
-        'extra': 1,
-    }
-
-
 @method_decorator(login_required, name='dispatch')
-class ThreadCreateView(CreateWithInlinesView):
+class ThreadCreateView(BaseView, CreateWithInlinesView):
     """
     Display a creation form for `forum.Thread` model and 
     first `forum.Post` model to this Thread
@@ -84,12 +71,13 @@ class ThreadCreateView(CreateWithInlinesView):
         try:
             self._before_forms_validation(form, inlines)
         except Section.DoesNotExist:
-            return HttpResponseBadRequest(
+            raise HttpError(
+                404,
                 f'section with pk={section_pk} does not exist'
             )
 
         return super().forms_valid(form, inlines)
-
+    
     def _before_forms_validation(self, form, inlines):
         section_pk = self.kwargs['section_pk']
 
@@ -102,7 +90,7 @@ class ThreadCreateView(CreateWithInlinesView):
 
 
 @method_decorator(login_required, name='dispatch')
-class PostReplyCreateView(CreateView):
+class PostReplyCreateView(BaseView, CreateView):
     """
     Display a creation form for `forum.Post` model 
     which is a reply to some `forum.Post` model in the same `forum.Thread` model
@@ -116,7 +104,8 @@ class PostReplyCreateView(CreateView):
         try:
             kwargs['post'] = Post.objects.get(pk=post_pk)
         except Post.DoesNotExist:
-            return HttpResponseBadRequest(
+            raise HttpError(
+                404,
                 f'post with pk={post_pk} does not exist'
             )
 
@@ -126,15 +115,18 @@ class PostReplyCreateView(CreateView):
         try:
             self._before_form_validation(form)
         except Post.DoesNotExist:
-            return HttpResponseBadRequest(
+            raise HttpError(
+                404,
                 f'post with pk={post_pk} does not exist'
             )
         except Thread.DoesNotExist:
-            return HttpResponseBadRequest(
+            raise HttpError(
+                404,
                 f'thread with pk={thread_pk} does not exist'
             )
         except ThreadClosed:
-            return HttpResponseBadRequest(
+            raise HttpError(
+                403,
                 f'thread with pk={thread_pk} is closed'
             )
         
@@ -157,7 +149,7 @@ class PostReplyCreateView(CreateView):
 
 
 @method_decorator(login_required, name='dispatch')
-class ThreadUpdateView(View):
+class ThreadUpdateView(BaseView, View):
     """
     Toggle `is_closed` bool variable of `forum.Thread` model
     """
@@ -170,11 +162,13 @@ class ThreadUpdateView(View):
                 self.request.user
             )
         except PermissionsDenied:
-            return HttpResponseBadRequest(
+            raise HttpError(
+                403,
                 f'only author can close or open their threads'
             )
         except Thread.DoesNotExist:
-            return HttpResponseBadRequest(
+            raise HttpError(
+                404,
                 f'thread with pk={thread_pk} does not exist'
             )
 
@@ -183,7 +177,7 @@ class ThreadUpdateView(View):
         )
 
 
-class SearchResultsView(TemplateView):
+class SearchResultsView(BaseView, TemplateView):
     """
     Display results of forum search
     """

@@ -3,10 +3,11 @@ from django_registration.backends.activation.views import RegistrationView
 from django.urls import reverse_lazy
 
 from . import models
+from core.views import BaseView
 from .models import User
 
 
-class ProfileDetailView(DetailView):
+class ProfileDetailView(BaseView, DetailView):
     """
     Display a `auth.User` model.
     """
@@ -15,7 +16,7 @@ class ProfileDetailView(DetailView):
     template_name = 'accounts/profile.html'
 
 
-class ProfileUpdateView(UpdateView):
+class ProfileUpdateView(BaseView, UpdateView):
     """
     Display form to update a `auth.User` model.
     """

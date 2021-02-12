@@ -3,8 +3,8 @@ from django.contrib.auth import get_user_model
 from extra_views import InlineFormSet
 from pydoc import locate
 
-from core.exceptions import *
-from .models import *
+from .exceptions import PermissionsDenied
+from .models import Section, Thread, Post 
 
 
 User = get_user_model()

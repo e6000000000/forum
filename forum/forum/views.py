@@ -1,15 +1,16 @@
+import logging
+import json
 from django.http import HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
 from django.urls import reverse_lazy
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, View, TemplateView
+from django.views.generic import ListView, DetailView, CreateView, View, TemplateView
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from extra_views import CreateWithInlinesView
-import logging
-import json
 
-from core.exceptions import *
-from .models import *
-from .services import *
+from core.exceptions import HttpError
+from .exceptions import PermissionsDenied, ThreadClosed
+from .models import Section, Thread, Post
+from .services import PostInline, forum_search, toggle_liked, toggle_thread_is_closed
 from core.views import BaseView
 
 
@@ -172,7 +173,7 @@ class ThreadIsClosedToggleView(BaseView, View):
         except PermissionsDenied:
             raise HttpError(
                 403,
-                f'only author can close or open their threads'
+                'only author can close or open their threads'
             )
         except Thread.DoesNotExist:
             raise HttpError(

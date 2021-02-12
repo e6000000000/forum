@@ -1,15 +1,18 @@
-from django.views.generic import UpdateView, DetailView, UpdateView
+from django.views.generic import DetailView, UpdateView
 from django_registration.backends.activation.views import RegistrationView
 from django.urls import reverse_lazy
+from django.contrib.auth import get_user_model
 
 from . import models
 from core.views import BaseView
-from .models import User
+
+
+User = get_user_model()
 
 
 class ProfileDetailView(BaseView, DetailView):
     """
-    Display a `auth.User` model.
+    Display `User`.
     """
     model = User
     context_object_name = 'account'
@@ -18,7 +21,7 @@ class ProfileDetailView(BaseView, DetailView):
 
 class ProfileUpdateView(BaseView, UpdateView):
     """
-    Display form to update a `auth.User` model.
+    Display form to update `User`.
     """
     model = User
     context_object_name = 'account'

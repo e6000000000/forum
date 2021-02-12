@@ -120,7 +120,8 @@ class Post(models.Model):
 
     It will be looks like:
         thread1
-        |---post1 (created with thread creation, there user describe his question)
+        |---post1 (created with thread creation,
+        |          there user will describe his question)
         |---post2 (reply to first post)
         |---post3 (reply to one of posts above)
     """

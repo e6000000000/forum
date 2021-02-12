@@ -7,26 +7,39 @@ from django.urls import reverse_lazy
 models.CharField.register_lookup(functions.Lower)
 models.TextField.register_lookup(functions.Lower)
 
+User = get_user_model()
+
+
 class Section(models.Model):
-    """Stores a Section of forum,
-    related to :model:`accounts.User`
+    """
+    Section of forum,
+    related to `accounts.User` model
+
+    It will be looks like:
+        section1 (about something)
+        section2 (about something else)
     """
     title = models.CharField(
+        verbose_name='Title',
         max_length=100,
         unique=True
     )
     description = models.TextField(
+        verbose_name='Description',
         max_length=500
     )
     author = models.ForeignKey(
-        get_user_model(),
+        verbose_name='Author',
+        to=User,
         on_delete=models.CASCADE,
         null=True
     )
     raiting = models.IntegerField(
+        verbose_name='Raiting',
         default=0
     )
     creation_datetime = models.DateTimeField(
+        verbose_name='Creation date and time',
         auto_now_add=True
     )
 
@@ -44,29 +57,40 @@ class Section(models.Model):
         return self.title
 
 class Thread(models.Model):
-    """Stores a Thread of Section,
-    related to :model:`accounts.User` and :model:`forum.Section`
+    """Thread in Section,
+    related to `accounts.User` and `forum.Section` model
+
+    It will be looks like:
+        section1
+        |---thread1 (help me with ...)
+        |---thread2 (how to ...)
     """
     title = models.CharField(
+        verbose_name='Title',
         max_length=100,
         unique=True
     )
     author = models.ForeignKey(
-        get_user_model(),
+        verbose_name='Author',
+        to=User,
         on_delete=models.CASCADE,
         null=True
     )
     raiting = models.IntegerField(
+        verbose_name='Raiting',
         default=0
     )
     is_closed = models.BooleanField(
+        verbose_name='Is closed',
         default=False
     )
     creation_datetime = models.DateTimeField(
+        verbose_name='Creation date and time',
         auto_now_add=True
     )
     section = models.ForeignKey(
-        Section,
+        verbose_name='Section',
+        to=Section,
         on_delete=models.CASCADE,
         related_name='threads',
         related_query_name="thread"
@@ -87,23 +111,33 @@ class Thread(models.Model):
         return self.title
 
 class Post(models.Model):
-    """Stores a Post of Thread,
-    related to :model:`accounts.User` and :model:`forum.Section`
+    """Post in Thread,
+    related to `accounts.User` model and `forum.Section` model
+
+    It will be looks like:
+        thread1
+        |---post1 (created with thread creation, there user describe his question)
+        |---post2 (reply to first post)
+        |---post3 (reply to one of posts above)
     """
     text = models.TextField(
+        verbose_name='Text',
         max_length=2000
     )
     author = models.ForeignKey(
-        get_user_model(),
+        verbose_name='Author',
+        to=User,
         on_delete=models.CASCADE,
         null=True
     )
     creation_datetime = models.DateTimeField(
+        verbose_name='Creation date and time',
         auto_now_add=True
     )
 
     reply_to = models.ForeignKey(
-        'Post',
+        verbose_name='Reply to',
+        to='Post',
         on_delete=models.SET_NULL,
         related_name='replys',
         related_query_name="reply",
@@ -111,7 +145,8 @@ class Post(models.Model):
         blank=True
     )
     thread = models.ForeignKey(
-        Thread,
+        verbose_name='Thread',
+        to=Thread,
         on_delete=models.CASCADE,
         related_name='posts',
         related_query_name='post'

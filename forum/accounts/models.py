@@ -9,8 +9,11 @@ class User(AbstractUser):
     """
     A custom User model
     """
-    bio = models.TextField()
+    bio = models.TextField(
+        verbose_name='Biography'
+    )
     avatar = ResizedImageField(
+        verbose_name='Avatar',
         size=[250, 250],
         crop=['middle', 'center'],
         force_format='PNG',
@@ -18,7 +21,7 @@ class User(AbstractUser):
         default='default.png'
     )
     email = models.EmailField(
-        'email address',
+        verbose_name='Email address',
         unique=True
     )
 

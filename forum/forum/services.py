@@ -1,6 +1,7 @@
-from typing import Any
+from typing import Any, Union
 from django.contrib.auth import get_user_model
 from extra_views import InlineFormSet
+from pydoc import locate
 
 from core.exceptions import *
 from .models import *
@@ -25,7 +26,7 @@ class PostInline(InlineFormSet):
 
 def forum_search(text: str) -> dict:
     """
-    Search `forum.Section`, `forum.Thread` and `auth.User` models in database
+    Search `forum.Section`, `forum.Thread` and `auth.User` in database
 
     Args:
         text: str - text to search for
@@ -75,10 +76,10 @@ def toggle_thread_is_closed(pk: Any, user: User) -> Thread:
     Toggle `is_closed` bool variable of `forum.Thread` if user have permissions.
 
     Args:
-        pk: Any - primary key of `forum.Thread` model
+        pk: Any - primary key of `forum.Thread`
         user: User - user who wants to toggle. if `None` it allows.
     Return:
-        `forum.Thread` model which was changed
+        `forum.Thread` which was changed
     """
 
     thread = Thread.objects.get(
@@ -88,6 +89,36 @@ def toggle_thread_is_closed(pk: Any, user: User) -> Thread:
         raise PermissionsDenied()
 
     thread.is_closed = not thread.is_closed
-    thread.save()
+    thread.save(update_fields=('is_closed', ))
 
     return thread
+
+
+def toggle_liked(model_type: str, pk: Any, user: User) -> Union[Section, Thread, Post]:
+    """
+    Add or remove `User` to likers of `forum.Section`, `forum.Thread` or `forum.Post`
+    
+    Args:
+        model_type: str - type of model. can be `Section`, `Thread` or `Post`
+        pk: Any - primary key of model instance
+        user: User - user who wants to like/unlike.
+    
+    Return:
+        Instance of declarated model_type
+    """
+
+    if model_type not in ('Section', 'Thread', 'Post'):
+        raise ValueError(
+            f'"model_type" should be in (Section, Thread, Post),\
+              not {model_type}'
+        )
+
+    model = locate(f'forum.models.{model_type}')
+    instance = model.objects.get(pk=pk)
+    try:
+        instance.likers.get(pk=user.pk)
+        instance.likers.remove(user)
+    except User.DoesNotExist:
+        instance.likers.add(user)
+
+    return instance

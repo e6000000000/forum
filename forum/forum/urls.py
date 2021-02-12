@@ -36,12 +36,17 @@ urlpatterns = [
     ),
     path(
         'section/<int:section_pk>/thread_update/<int:pk>/',
-        views.ThreadUpdateView.as_view(),
+        views.ThreadIsClosedToggleView.as_view(),
         name='thread_update'
     ),
     path(
         'search/',
         views.SearchResultsView.as_view(),
         name='search'
+    ),
+    path(
+        'toggle_like/',
+        views.LikeToggleView.as_view(),
+        name='toggle_like'
     ),
 ]

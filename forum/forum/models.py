@@ -19,6 +19,7 @@ class Section(models.Model):
         section1 (about something)
         section2 (about something else)
     """
+
     title = models.CharField(
         verbose_name='Title',
         max_length=100,
@@ -34,9 +35,10 @@ class Section(models.Model):
         on_delete=models.CASCADE,
         null=True
     )
-    raiting = models.IntegerField(
-        verbose_name='Raiting',
-        default=0
+    likers = models.ManyToManyField(
+        verbose_name='Likers',
+        to=User,
+        related_name='liked_sections'
     )
     creation_datetime = models.DateTimeField(
         verbose_name='Creation date and time',
@@ -65,6 +67,7 @@ class Thread(models.Model):
         |---thread1 (help me with ...)
         |---thread2 (how to ...)
     """
+
     title = models.CharField(
         verbose_name='Title',
         max_length=100,
@@ -76,9 +79,10 @@ class Thread(models.Model):
         on_delete=models.CASCADE,
         null=True
     )
-    raiting = models.IntegerField(
-        verbose_name='Raiting',
-        default=0
+    likers = models.ManyToManyField(
+        verbose_name='Likers',
+        to=User,
+        related_name='liked_threads'
     )
     is_closed = models.BooleanField(
         verbose_name='Is closed',
@@ -120,6 +124,7 @@ class Post(models.Model):
         |---post2 (reply to first post)
         |---post3 (reply to one of posts above)
     """
+
     text = models.TextField(
         verbose_name='Text',
         max_length=2000
@@ -134,7 +139,6 @@ class Post(models.Model):
         verbose_name='Creation date and time',
         auto_now_add=True
     )
-
     reply_to = models.ForeignKey(
         verbose_name='Reply to',
         to='Post',

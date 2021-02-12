@@ -15,7 +15,7 @@
         {% for section in sections %}
             <div class="item border">
                 <div class="text">
-                    <h3><a href="{% url 'section_details' section.pk %}">{{ section.title }}</a></h3>
+                    <h3><a onclick="on_like('Section', {{ section.pk }})">[{{ section.likers.count }}]</a> <a href="{% url 'section_details' section.pk %}">{{ section.title }}</a></h3>
                     <p><span></span>{{ section.description }}</p>
                 </div>
             </div>

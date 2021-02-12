@@ -1,10 +1,11 @@
-from django.http import HttpResponseBadRequest, HttpResponseRedirect
+from django.http import HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, View, TemplateView
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from extra_views import CreateWithInlinesView
 import logging
+import json
 
 from core.exceptions import *
 from .models import *
@@ -17,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 class SectionListView(BaseView, ListView):
     """
-    Display a list of `forum.Section` model.
+    Display a list of `forum.Section` models.
     """
     model = Section
     context_object_name = 'sections'
@@ -26,7 +27,7 @@ class SectionListView(BaseView, ListView):
 
 class SectionDetailView(BaseView, DetailView):
     """
-    Display a `forum.Section` model.
+    Display a `forum.Section` model with `threads`.
     """
     model = Section
     context_object_name = 'section'
@@ -35,7 +36,7 @@ class SectionDetailView(BaseView, DetailView):
 
 class ThreadDetailView(BaseView, DetailView):
     """
-    Display a forum.Thread` model.
+    Display a `forum.Thread` model with `posts`.
     """
     model = Thread
     context_object_name = 'thread'
@@ -63,7 +64,7 @@ class SectionCreateView(BaseView, CreateView):
 class ThreadCreateView(BaseView, CreateWithInlinesView):
     """
     Display a creation form for `forum.Thread` model and 
-    first `forum.Post` model to this Thread
+    first `forum.Post` model to this thread
     """
     model = Thread
     inlines = [PostInline]
@@ -98,7 +99,7 @@ class ThreadCreateView(BaseView, CreateWithInlinesView):
 class PostReplyCreateView(BaseView, CreateView):
     """
     Display a creation form for `forum.Post` model 
-    which is a reply to some `forum.Post` model in the same `forum.Thread` model
+    which is reply to a post in the same thread
     """
     model = Post
     template_name = 'forum/postreply_create.html'
@@ -156,7 +157,7 @@ class PostReplyCreateView(BaseView, CreateView):
 
 
 @method_decorator(login_required, name='dispatch')
-class ThreadUpdateView(BaseView, View):
+class ThreadIsClosedToggleView(BaseView, View):
     """
     Toggle `is_closed` bool variable of `forum.Thread` model
     """
@@ -186,7 +187,7 @@ class ThreadUpdateView(BaseView, View):
 
 class SearchResultsView(BaseView, TemplateView):
     """
-    Display results of forum search
+    Display results of `forum_search`
     """
     template_name = 'forum/search_result.html'
 
@@ -194,4 +195,34 @@ class SearchResultsView(BaseView, TemplateView):
         text = self.request.GET.get('text', '')
         kwargs.update(forum_search(text))
         return super().get_context_data(**kwargs)
+
+
+@method_decorator(login_required, name='dispatch')
+class LikeToggleView(BaseView, View):
+    """
+    Add or remove `User` to likers of `forum.Section`, `forum.Thread` or `forum.Post`
+    """
+
+    def post(self, *args, **kwargs):
+        jsn = json.loads(
+            self.request.body.decode('utf-8')
+        )
+        model_type = jsn['model_type']
+        pk = jsn['pk']
+        user = self.request.user
+        
+        try:
+            toggle_liked(
+                model_type=model_type,
+                pk=pk,
+                user=user
+            )
+        except ValueError as e:
+            raise HttpError(
+                400,
+                e.__str__()
+            )
+        
+        return JsonResponse({'sucsess': True})
+
 

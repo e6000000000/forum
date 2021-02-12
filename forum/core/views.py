@@ -25,7 +25,8 @@ class BaseView():
                 template.render(context, request),
                 status=e.code
             )
-        except Exception:
+        except Exception as e:
+            print(e)
             error_text = traceback.format_exc()
             logger.error(error_text)
             template = get_template('error.html')

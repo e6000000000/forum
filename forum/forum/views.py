@@ -1,5 +1,6 @@
 import logging
 import json
+
 from django.http import HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, View, TemplateView
@@ -54,11 +55,8 @@ class SectionCreateView(BaseView, CreateView):
     fields = ['title', 'description']
 
     def form_valid(self, form):
-        self._before_form_validation(form)
-        return super().form_valid(form)
-
-    def _before_form_validation(self, form):
         form.instance.author = self.request.user
+        return super().form_valid(form)
 
 
 @method_decorator(login_required, name='dispatch')
@@ -74,27 +72,26 @@ class ThreadCreateView(BaseView, CreateWithInlinesView):
     fields = ['title']
 
     def forms_valid(self, form, inlines):
+        section_pk = self.kwargs['section_pk']
+
         try:
-            section_pk = self.kwargs['section_pk']
-            self._before_forms_validation(form, inlines)
+            form.instance.section = Section.objects.get(
+                pk=section_pk
+            )
         except Section.DoesNotExist:
             raise HttpError(
                 404,
                 f'section with pk={section_pk} does not exist'
             )
 
-        return super().forms_valid(form, inlines)
-    
-    def _before_forms_validation(self, form, inlines):
-        section_pk = self.kwargs['section_pk']
-
         form.instance.author = self.request.user
-        form.instance.section = Section.objects.get(pk=section_pk)
     
         for formtype in inlines:
             for inline_form in formtype:
                 inline_form.instance.author = self.request.user
 
+        return super().forms_valid(form, inlines)
+    
 
 @method_decorator(login_required, name='dispatch')
 class PostReplyCreateView(BaseView, CreateView):
@@ -119,10 +116,23 @@ class PostReplyCreateView(BaseView, CreateView):
         return super().get_context_data(**kwargs)
 
     def form_valid(self, form):
+        post_pk = self.kwargs['post_pk']
+        thread_pk = self.kwargs['thread_pk']
+
+        if form.instance.thread.is_closed:
+            raise HttpError(
+                403,
+                f'thread with pk={thread_pk} is closed'
+            )
+
+        form.instance.author = self.request.user
         try:
-            post_pk = self.kwargs['post_pk']
-            thread_pk = self.kwargs['thread_pk']
-            self._before_form_validation(form)
+            form.instance.reply_to = Post.objects.get(
+                pk=post_pk
+            )
+            form.instance.thread = Thread.objects.get(
+                pk=thread_pk
+            )
         except Post.DoesNotExist:
             raise HttpError(
                 404,
@@ -133,27 +143,11 @@ class PostReplyCreateView(BaseView, CreateView):
                 404,
                 f'thread with pk={thread_pk} does not exist'
             )
-        except ThreadClosed:
-            raise HttpError(
-                403,
-                f'thread with pk={thread_pk} is closed'
-            )
+
         
         return super().form_valid(form)
     
     def _before_form_validation(self, form):
-        post_pk = self.kwargs['post_pk']
-        thread_pk = self.kwargs['thread_pk']
-
-        form.instance.author = self.request.user
-        form.instance.reply_to = Post.objects.get(
-            pk=post_pk
-        )
-        form.instance.thread = Thread.objects.get(
-            pk=thread_pk
-        )
-
-        if form.instance.thread.is_closed:
             raise ThreadClosed()
 
 

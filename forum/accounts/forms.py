@@ -7,6 +7,7 @@ from captcha.widgets import ReCaptchaV2Checkbox, ReCaptchaV2Invisible, ReCaptcha
 
 User = get_user_model()
 
+
 class CustomUserForm(RegistrationForm):
     """
     Registration form with captcha

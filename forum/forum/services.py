@@ -1,7 +1,8 @@
+from pydoc import locate
 from typing import Any, Union
+
 from django.contrib.auth import get_user_model
 from extra_views import InlineFormSet
-from pydoc import locate
 
 from .exceptions import PermissionsDenied
 from .models import Section, Thread, Post 

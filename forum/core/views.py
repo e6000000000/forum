@@ -1,8 +1,9 @@
+import traceback
+import logging
+
 from django.views import View
 from django.http import HttpResponseServerError, HttpResponse
 from django.template.loader import get_template
-import traceback
-import logging
 
 from .exceptions import HttpError
 

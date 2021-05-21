@@ -1,17 +1,17 @@
 import logging
 import json
 
-from django.http import HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
-from django.urls import reverse_lazy
-from django.views.generic import ListView, DetailView, CreateView, View, TemplateView
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseRedirect, JsonResponse
 from django.utils.decorators import method_decorator
+from django.views.generic import ListView, DetailView, CreateView, View, TemplateView
 from extra_views import CreateWithInlinesView
 
-from core.exceptions import HttpError
-from .exceptions import PermissionsDenied, ThreadClosed
+from .exceptions import PermissionsDenied
+from .forms import PostInline
 from .models import Section, Thread, Post
-from .services import PostInline, forum_search, toggle_liked, toggle_thread_is_closed
+from .services import forum_search, toggle_liked, toggle_thread_is_closed
+from core.exceptions import HttpError
 from core.views import BaseView
 
 
@@ -119,12 +119,6 @@ class PostReplyCreateView(BaseView, CreateView):
         post_pk = self.kwargs['post_pk']
         thread_pk = self.kwargs['thread_pk']
 
-        if form.instance.thread.is_closed:
-            raise HttpError(
-                403,
-                f'thread with pk={thread_pk} is closed'
-            )
-
         form.instance.author = self.request.user
         try:
             form.instance.reply_to = Post.objects.get(
@@ -144,11 +138,13 @@ class PostReplyCreateView(BaseView, CreateView):
                 f'thread with pk={thread_pk} does not exist'
             )
 
+        if form.instance.thread.is_closed:
+            raise HttpError(
+                403,
+                f'thread with pk={thread_pk} is closed'
+            )
         
         return super().form_valid(form)
-    
-    def _before_form_validation(self, form):
-            raise ThreadClosed()
 
 
 @method_decorator(login_required, name='dispatch')
@@ -195,7 +191,7 @@ class SearchResultsView(BaseView, TemplateView):
 @method_decorator(login_required, name='dispatch')
 class LikeToggleView(BaseView, View):
     """
-    Add or remove `User` to likers of `forum.Section`, `forum.Thread` or `forum.Post`
+    Add or remove `User` to likers of `forum.Section` or `forum.Thread` 
     """
 
     def post(self, *args, **kwargs):

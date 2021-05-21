@@ -1,28 +1,13 @@
-from pydoc import locate
 from typing import Any, Union
 
 from django.contrib.auth import get_user_model
-from extra_views import InlineFormSet
 
 from .exceptions import PermissionsDenied
-from .models import Section, Thread, Post 
+from .models import Section, Thread, Post
+from . import models
 
 
 User = get_user_model()
-
-
-class PostInline(InlineFormSet):
-    """
-    InlineFormSet of `forum.Post` model
-    """
-    model = Post
-    fields = ['text']
-
-    factory_kwargs = {
-        'can_delete': False,
-        'can_order': False,
-        'extra': 1,
-    }
 
 
 def forum_search(text: str) -> dict:
@@ -72,7 +57,7 @@ def forum_search(text: str) -> dict:
     return result
 
 
-def toggle_thread_is_closed(pk: Any, user: User) -> Thread:
+def toggle_thread_is_closed(pk: Any, user: User=None) -> Thread:
     """
     Toggle `is_closed` bool variable of `forum.Thread` if user have permissions.
 
@@ -86,7 +71,7 @@ def toggle_thread_is_closed(pk: Any, user: User) -> Thread:
     thread = Thread.objects.get(
         pk=pk
     )
-    if user is not None and thread.author != user:
+    if user is not None and thread.author.pk != user.pk:
         raise PermissionsDenied()
 
     thread.is_closed = not thread.is_closed
@@ -97,10 +82,10 @@ def toggle_thread_is_closed(pk: Any, user: User) -> Thread:
 
 def toggle_liked(model_type: str, pk: Any, user: User) -> Union[Section, Thread, Post]:
     """
-    Add or remove `User` to likers of `forum.Section`, `forum.Thread` or `forum.Post`
+    Add or remove `User` to likers of `forum.Section` or `forum.Thread`
     
     Args:
-        model_type: str - type of model. can be `Section`, `Thread` or `Post`
+        model_type: str - type of model. can be `Section` or `Thread`
         pk: Any - primary key of model instance
         user: User - user who wants to like/unlike.
     
@@ -108,13 +93,12 @@ def toggle_liked(model_type: str, pk: Any, user: User) -> Union[Section, Thread,
         Instance of declarated model_type
     """
 
-    if model_type not in ('Section', 'Thread', 'Post'):
+    if model_type not in ('Section', 'Thread'):
         raise ValueError(
-            f'"model_type" should be in (Section, Thread, Post),\
-              not {model_type}'
+            f'"model_type" should be in (Section, Thread), not {model_type}'
         )
 
-    model = locate(f'forum.models.{model_type}')
+    model = getattr(models, model_type)
     instance = model.objects.get(pk=pk)
     try:
         instance.likers.get(pk=user.pk)

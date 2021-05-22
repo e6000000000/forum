@@ -17,6 +17,12 @@ class ProfileDetailTestCase(TestCase):
         
         self.assertEqual(200, response.status_code)
 
+    def test_get_profile_not_finded(self):
+        url = reverse('profile', args=(1215, ))
+        response = self.client.get(url)
+        
+        self.assertEqual(404, response.status_code)
+
 
 class ProfileUpdateTestCase(TestCase):
     def setUp(self):

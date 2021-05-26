@@ -36,8 +36,6 @@ class SectionDetailView(BaseView, DetailView):
     context_object_name = 'section'
     template_name = 'forum/section_details.html'
 
-    def 
-
 
 class ThreadDetailView(BaseView, DetailView):
     """

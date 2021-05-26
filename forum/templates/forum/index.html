@@ -1,6 +1,6 @@
-{% extends 'base.html' %}
+{% extends 'list.html' %}
 {% block title %}Forum{% endblock %}
-{% block content %}
+{% block list %}
     <div class="item">
         <div class="text">
             <h1>Forum sections</h1>
@@ -11,7 +11,7 @@
             {% endif %}
         </div>
     </div>
-    <div class='list'>
+    <div class="list">
         {% for section in sections %}
             <div class="item border">
                 <div class="text">

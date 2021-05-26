@@ -23,6 +23,7 @@ class SectionListView(BaseView, ListView):
     Display a list of `forum.Section` models.
     """
     model = Section
+    paginate_by = 50
     context_object_name = 'sections'
     template_name = 'forum/index.html'
 
@@ -34,6 +35,8 @@ class SectionDetailView(BaseView, DetailView):
     model = Section
     context_object_name = 'section'
     template_name = 'forum/section_details.html'
+
+    def 
 
 
 class ThreadDetailView(BaseView, DetailView):

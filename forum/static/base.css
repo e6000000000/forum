@@ -194,3 +194,11 @@ form input[type=submit]:hover {
   white-space: pre-wrap;
 }
 
+.pages {
+    margin: 4pt;
+    display: flex;
+}
+
+.pages>* {
+    margin: 2pt;
+}
